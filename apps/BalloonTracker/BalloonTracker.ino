@@ -221,7 +221,7 @@ void handleTelemetry(u32 now, const TelemetryPacket& packet)
 
 	Serial.print(packet.gpsCourse);
 	Serial.print(',');
-	Serial.print(TinyGPS::f_cardinal(packet.gpsCourse));
+	Serial.print(TinyGPS::cardinal(packet.gpsCourse));
 	Serial.print(',');
 	Serial.print((int)packet.gpsSpeed);
 	Serial.print(',');
@@ -312,7 +312,7 @@ void transmitLogging(u32 now)
 	Serial.print(',');
 	Serial.print(gps.f_course(), 3);
 	Serial.print(',');
-	Serial.print(TinyGPS::f_cardinal(gps.f_course()));
+	Serial.print(TinyGPS::cardinal(gps.f_course()));
 	Serial.print(',');
 	Serial.print(gps.f_speed_mps(), 3);
 	Serial.print(',');
@@ -328,7 +328,7 @@ void transmitLogging(u32 now)
 		Serial.print(',');
 		Serial.print(TinyGPS::course_to(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon), 0);
 		Serial.print(',');
-		Serial.print(TinyGPS::f_cardinal(TinyGPS::course_to(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon)));
+		Serial.print(TinyGPS::cardinal(TinyGPS::course_to(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon)));
 		Serial.print(',');
 	}
 	else
@@ -393,7 +393,7 @@ void transmitLCD(u32 now)
 		LCDSerial.print("Spd ");
 		LCDSerial.print((int)latestTelemetryPacket.gpsSpeed);
 		LCDSerial.print("m/s ");
-		LCDSerial.print(TinyGPS::f_cardinal(latestTelemetryPacket.gpsCourse));
+		LCDSerial.print(TinyGPS::cardinal(latestTelemetryPacket.gpsCourse));
 
 		LCDSerial.print(c_GoToLine2);
 		LCDSerial.print("Car ");
@@ -401,7 +401,7 @@ void transmitLCD(u32 now)
 		{
 			LCDSerial.print(gps.f_speed_mps(), 0);
 			LCDSerial.print("m/s ");
-			LCDSerial.print(TinyGPS::f_cardinal(gps.f_course()));
+			LCDSerial.print(TinyGPS::cardinal(gps.f_course()));
 		}
 		else
 		{
@@ -418,7 +418,7 @@ void transmitLCD(u32 now)
 			gps.f_get_position(&lat, &lon);
 			LCDSerial.print(TinyGPS::distance_between(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon), 0);
 			LCDSerial.print("m ");
-			LCDSerial.print(TinyGPS::f_cardinal(TinyGPS::course_to(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon)));
+			LCDSerial.print(TinyGPS::cardinal(TinyGPS::course_to(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon)));
 		}
 		else
 		{
