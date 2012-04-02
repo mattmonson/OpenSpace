@@ -242,7 +242,7 @@ void transmitLogging(u32 now)
 	Serial.print(',');
 	Serial.print(gps.f_course(), 3);
 	Serial.print(',');
-	Serial.print(TinyGPS::f_cardinal(gps.f_course()));
+	Serial.print(TinyGPS::cardinal(gps.f_course()));
 	Serial.print(',');
 	Serial.print(gps.f_speed_mps(), 3);
 	Serial.print(',');

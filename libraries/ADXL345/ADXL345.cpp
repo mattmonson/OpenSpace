@@ -25,8 +25,8 @@ ADXL345::ADXL345() :
 void ADXL345::setup()
 {
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_POWER_CTL);
-	Wire.send(0x08);
+	Wire.write(REGISTER_POWER_CTL);
+	Wire.write(0x08);
 	Wire.endTransmission();
 
 	SetDataFormat(true, 3);
@@ -35,7 +35,7 @@ void ADXL345::setup()
 void ADXL345::loop()
 {
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_DATAX0);
+	Wire.write(REGISTER_DATAX0);
 	Wire.endTransmission();
 
 	Wire.requestFrom(I2C_ADDRESS, (u8)sizeof(m_OutputRaw));
@@ -51,8 +51,8 @@ void ADXL345::SetDataFormat(bool fullResolution, u8 range)
 	u8 value = (m_FullResolution ? 0x08 : 0x00) | m_Range;
 
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_DATA_FORMAT);
-	Wire.send(value);
+	Wire.write(REGISTER_DATA_FORMAT);
+	Wire.write(value);
 	Wire.endTransmission();
 }
 

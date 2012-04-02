@@ -112,7 +112,7 @@ bool XTendAPI::Receive(const XTendAPI::Frame** ppFrame)
 #endif
 			m_NextSection = ENextSection::Failure;
 		}
-		else if (m_pStream->available() < m_LengthRemaining)
+		else if ((uint16_t)m_pStream->available() < m_LengthRemaining)
 		{
 			return false;
 		}
@@ -164,7 +164,7 @@ bool XTendAPI::Receive(const XTendAPI::Frame** ppFrame)
 
 u8 XTendAPI::TransmitRaw(u8 data)
 {
-	m_pStream->print(data, BYTE);
+	m_pStream->write(data);
 	return data;
 }
 

@@ -33,7 +33,7 @@ void ITG3200::setup()
 void ITG3200::loop()
 {
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_TEMP1);
+	Wire.write(REGISTER_TEMP1);
 	Wire.endTransmission();
 
 	Wire.requestFrom(I2C_ADDRESS, (u8)sizeof(m_OutputRaw));
@@ -67,8 +67,8 @@ void ITG3200::SetSampleRateDivisor(u8 divisor)
 {
 	// sample rate is F_internal / (divisor + 1), where F_internal is either 1 or 8 kHz
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_SMPLRT_DIV);
-	Wire.send(divisor);
+	Wire.write(REGISTER_SMPLRT_DIV);
+	Wire.write(divisor);
 	Wire.endTransmission();
 }
 
@@ -77,8 +77,8 @@ void ITG3200::SetLowPassFilterConfig(ELowPassFilterConfig::Enum lpfConfig)
 	u8 value = (EFullScale::PlusMinus2000 << 3) | lpfConfig;
 
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_DPLF_FS);
-	Wire.send(value);
+	Wire.write(REGISTER_DPLF_FS);
+	Wire.write(value);
 	Wire.endTransmission();
 }
 

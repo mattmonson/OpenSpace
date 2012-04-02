@@ -30,10 +30,10 @@ void HMC5843::setup(EOutputRate::Enum outputRate, EBias::Enum bias, EConversionM
 	u8 mode = conversionMode;
 
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(0x00);
-	Wire.send(configA);
-	Wire.send(configB);
-	Wire.send(mode);
+	Wire.write((uint8_t)0x00);
+	Wire.write(configA);
+	Wire.write(configB);
+	Wire.write(mode);
 	Wire.endTransmission();
 }
 

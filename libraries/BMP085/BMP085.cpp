@@ -15,12 +15,12 @@ namespace
 }
 
 BMP085::BMP085() :
+	m_State(EState::Start),
+	m_StateStart(0),
 	m_OSS(0),
 	m_ReferencePressureInPa(101325),
 	m_TempInDeciC(0),
-	m_PressureInPa(0),
-	m_State(EState::Start),
-	m_StateStart(0)
+	m_PressureInPa(0)
 {
 }
 
@@ -28,7 +28,7 @@ void BMP085::setup()
 {
 	// read the configuration data
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_CALIBRATION_START);
+	Wire.write(REGISTER_CALIBRATION_START);
 	Wire.endTransmission();
 
 	Wire.requestFrom(I2C_ADDRESS, (u8)22);
@@ -78,7 +78,7 @@ void BMP085::loopAsync()
 		break;
 		
 	case EState::WaitForPressure:
-		if (millis() - m_StateStart < (2 + (3 << m_OSS)))
+		if (millis() - m_StateStart < (2 + ((uint32_t)3 << m_OSS)))
 			break;
 		
 		m_UP = GetRawPressure();
@@ -131,15 +131,15 @@ f32 BMP085::GetAltitudeInM() const
 void BMP085::RequestTemp()
 {
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_CONTROL);
-	Wire.send(CONTROL_MEASURE_TEMP);
+	Wire.write(REGISTER_CONTROL);
+	Wire.write(CONTROL_MEASURE_TEMP);
 	Wire.endTransmission();
 }
 
 s32 BMP085::GetRawTemp()
 {
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_OUTPUT);
+	Wire.write(REGISTER_OUTPUT);
 	Wire.endTransmission();
 
 	Wire.requestFrom(I2C_ADDRESS, (u8)2);
@@ -150,15 +150,15 @@ void BMP085::RequestPressure()
 {
 	u8 ossPressure = CONTROL_MEASURE_PRESSURE + (m_OSS << 6);
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_CONTROL);
-	Wire.send(ossPressure);
+	Wire.write(REGISTER_CONTROL);
+	Wire.write(ossPressure);
 	Wire.endTransmission();
 }
 
 s32 BMP085::GetRawPressure()
 {
 	Wire.beginTransmission(I2C_ADDRESS);
-	Wire.send(REGISTER_OUTPUT);
+	Wire.write(REGISTER_OUTPUT);
 	Wire.endTransmission();
 
 	Wire.requestFrom(I2C_ADDRESS, (u8)3);
@@ -183,7 +183,6 @@ void BMP085::ProcessRawReadings()
 	u32 b4 = m_AC4 * (u32)(x3 + 32768) >> 15;
 	u32 b7 = ((u32)m_UP - b3) * (50000 >> m_OSS);
 	s32 p = (b7 < 0x80000000 ? b7 * 2 / b4 : b7 / b4 * 2);
-	s32 p1 = p;
 	x1 = (p >> 8) * (p >> 8);
 	x1 = (x1 * 3038) >> 16;
 	x2 = (-7357 * p) >> 16;

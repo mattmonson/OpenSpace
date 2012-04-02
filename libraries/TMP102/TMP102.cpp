@@ -30,16 +30,16 @@ TMP102::TMP102(EAddress::Enum addr) :
 struct ConfigRegister
 {
 	ConfigRegister() : 
-		OneShotConversionReady(0),
-		ConverterResolution(3),
-		FaultQueue(0),
-		Polarity(0),
-		Thermostat(0),
-		ShutdownMode(0),
-		ConversionRate(TMP102::EConversionRate::Hz4),
-		Alert(1),
+		Reserved(0),
 		ExtendedMode(0),
-		Reserved(0)
+		Alert(1),
+		ConversionRate(TMP102::EConversionRate::Hz4),
+		ShutdownMode(0),
+		Thermostat(0),
+		Polarity(0),
+		FaultQueue(0),
+		ConverterResolution(3),
+		OneShotConversionReady(0)
 	{
 	}
 	 
@@ -62,12 +62,12 @@ void TMP102::setup(bool extendedMode, EConversionRate::Enum conversionRate)
 	config.ConversionRate = conversionRate;
 
 	Wire.beginTransmission(m_Address);
-	Wire.send(REGISTER_CONFIG);
+	Wire.write(REGISTER_CONFIG);
 	WireSendBigEndian((u8*)&config, sizeof(config));
 	Wire.endTransmission();
 	
 	Wire.beginTransmission(m_Address);
-	Wire.send(REGISTER_TEMP);
+	Wire.write(REGISTER_TEMP);
 	Wire.endTransmission();
 }
 
