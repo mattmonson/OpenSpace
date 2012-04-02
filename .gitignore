@@ -1,0 +1,10 @@
+# SVN #
+#######
+.svn
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Thumbs.db
+
