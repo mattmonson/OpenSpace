@@ -204,7 +204,6 @@ void transmitAPRS(u32 now)
 	lastTransmit = now;
 	++msgNum;
 
-	s16 year;
 	u8 hours, minutes, seconds;
 	f32 lat, lon;
 

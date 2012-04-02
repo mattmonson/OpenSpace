@@ -115,7 +115,7 @@ T PID(T& prevError, T& integral, const T& target, const T& current, f32 dt, f32 
 }
 
 template <typename TSerial>
-void serprintf(TSerial& serial, char *fmt, ...)
+void serprintf(TSerial& serial, const char *fmt, ...)
 {
 	char buffer[128];
 	va_list args;
