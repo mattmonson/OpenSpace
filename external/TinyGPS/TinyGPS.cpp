@@ -344,6 +344,14 @@ const char *TinyGPS::cardinal (float course)
   return directions[direction % 16];
 }
 
+bool TinyGPS::get_has_fix() const
+{
+return
+  _last_position_fix != GPS_INVALID_FIX_TIME &&
+  _last_time_fix != GPS_INVALID_FIX_TIME;
+}
+
+
 // lat/long in hundred thousandths of a degree and age of fix in milliseconds
 void TinyGPS::get_position(long *latitude, long *longitude, unsigned long *fix_age)
 {

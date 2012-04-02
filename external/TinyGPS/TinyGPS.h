@@ -54,6 +54,8 @@ public:
   bool encode(char c); // process one character received from GPS
   TinyGPS &operator << (char c) {encode(c); return *this;}
 
+  bool get_has_fix() const;
+
   // lat/long in hundred thousandths of a degree and age of fix in milliseconds
   void get_position(long *latitude, long *longitude, unsigned long *fix_age = 0);
 
