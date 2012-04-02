@@ -36,12 +36,12 @@ f32 ModInto(f32 in, f32 min, f32 max)
 void WireSendBigEndian(const u8* buffer, u8 size)
 {
 	for (u8 i=0; i<size; ++i)
-		Wire.send(buffer[size - i - 1]);
+		Wire.write(buffer[size - i - 1]);
 }
 
 void WireSendLittleEndian(const u8* buffer, u8 size)
 {
-	Wire.send(const_cast<u8*>(buffer), size);
+	Wire.write(const_cast<u8*>(buffer), size);
 }
 
 extern unsigned int __bss_end;

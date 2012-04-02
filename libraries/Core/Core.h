@@ -1,7 +1,7 @@
 #ifndef _CORE_H
 #define _CORE_H
 
-#include <WProgram.h>
+#include <Arduino.h>
 #include <Wire.h>
 
 #define u8 uint8_t
@@ -59,7 +59,7 @@ T WireReceiveBigEndian()
 {
 	T t;
 	for (u8 i=0; i<sizeof(T); ++i)
-		reinterpret_cast<u8*>(&t)[sizeof(T) - i - 1] = Wire.receive();
+		reinterpret_cast<u8*>(&t)[sizeof(T) - i - 1] = Wire.read();
 	return t;
 }
 
@@ -68,7 +68,7 @@ T WireReceiveLittleEndian()
 {
 	T t;
 	for (u8 i=0; i<sizeof(T); ++i)
-		reinterpret_cast<u8*>(&t)[i] = Wire.receive();
+		reinterpret_cast<u8*>(&t)[i] = Wire.read();
 	return t;
 }
 

@@ -16,7 +16,7 @@
 #ifndef Thermistor_h
 #define Thermistor_h
 
-#include "WProgram.h"
+#include "Arduino.h"
 #include "math.h"
 
 
