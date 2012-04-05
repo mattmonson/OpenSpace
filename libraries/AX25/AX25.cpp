@@ -1,7 +1,7 @@
 #include "AX25.h"
 #include <Sinewave.h>
 
-const u8 FLAG_BYTE = 0x7E;
+const uint8_t FLAG_BYTE = 0x7E;
 
 AX25Packet::AX25Packet() :
 	m_PTTPin(-1),
@@ -10,14 +10,14 @@ AX25Packet::AX25Packet() :
 {
 }
 
-void AX25Packet::MicECompress(AX25Address* dest, char* info, f32 lat, f32 lon, s32 altMeters, f32 speedMetersPerSecond, u32 courseDeg, char symbol, char table) const
+void AX25Packet::MicECompress(AX25Address* dest, char* info, float lat, float lon, int32_t altMeters, float speedMetersPerSecond, uint32_t courseDeg, char symbol, char table) const
 {
 	//TODO: this doesn't support position ambiguity
 
 	sprintf(dest->m_CallSign, "%.2ld%.2ld%.2ld",
-		(s32)fabs(lat),
-		(s32)fabs(lat *  60) % 60,
-		(s32)fabs(lat * 60 * 100) % 100
+		(int32_t)fabs(lat),
+		(int32_t)fabs(lat *  60) % 60,
+		(int32_t)fabs(lat * 60 * 100) % 100
 	);
 
 	const bool messageIsStandard = 1;
@@ -40,11 +40,11 @@ void AX25Packet::MicECompress(AX25Address* dest, char* info, f32 lat, f32 lon, s
 
 	dest->m_SSID = 0;
 
-	const s32 lonDeg = (s32)fabs(lon);
-	const s32 lonMin = (s32)fabs(lon * 60) % 60;
-	const s32 lonCentiMin = (s32)fabs(lon * 60 * 100) % 100;
+	const int32_t lonDeg = (int32_t)fabs(lon);
+	const int32_t lonMin = (int32_t)fabs(lon * 60) % 60;
+	const int32_t lonCentiMin = (int32_t)fabs(lon * 60 * 100) % 100;
 
-	const u32 speedKnots = (u32)METERS_PER_SECOND_TO_KNOTS(speedMetersPerSecond);
+	const uint32_t speedKnots = (uint32_t)METERS_PER_SECOND_TO_KNOTS(speedMetersPerSecond);
 
 	const bool gpsDataCurrent = 1;
 	sprintf(info, "%c%c%c%c%c%c%c%c%c%c%c%c}",
@@ -63,23 +63,23 @@ void AX25Packet::MicECompress(AX25Address* dest, char* info, f32 lat, f32 lon, s
 	);
 }
 
-void AX25Packet::build(const AX25Address& src, const AX25Address& dest, const AX25Address* path, const u8 pathCount, const char* message)
+void AX25Packet::build(const AX25Address& src, const AX25Address& dest, const AX25Address* path, const uint8_t pathCount, const char* message)
 {
 	m_BitStream.clear();
 	
 	m_CRC = 0xFFFF,
 	m_ConsecutiveOnes = 0;
 
-	for (u8 i=0; i<c_PrefixZeroesCount; ++i)
+	for (uint8_t i=0; i<c_PrefixZeroesCount; ++i)
 		addFlagByte(0x00);
 
-	for (u8 i=0; i<c_PrefixFlagsCount; ++i)
+	for (uint8_t i=0; i<c_PrefixFlagsCount; ++i)
 		addFlagByte(FLAG_BYTE);
 
 	addAddress(dest, false);
 	addAddress(src, pathCount == 0);
 	
-	for (u8 i=0; i<pathCount; ++i)
+	for (uint8_t i=0; i<pathCount; ++i)
 		addAddress(path[i], i+1 == pathCount);
 	
 	addByte(0x03); // UI frame
@@ -88,11 +88,11 @@ void AX25Packet::build(const AX25Address& src, const AX25Address& dest, const AX
 	while (*message)
 		addByte(*message++);
 	
-	u16 finalCRC = m_CRC;
+	uint16_t finalCRC = m_CRC;
 	addByte(~finalCRC & 0xFF);
 	addByte(~finalCRC >> 8);
 	
-	for (u8 i=0; i<c_SuffixFlagsCount; ++i)
+	for (uint8_t i=0; i<c_SuffixFlagsCount; ++i)
 		addFlagByte(FLAG_BYTE);
 }
 
@@ -101,20 +101,20 @@ const AX25Packet::AX25BitStream& AX25Packet::getBitStream() const
 	return m_BitStream;
 }
 
-void AX25Packet::addFlagByte(u8 byte)
+void AX25Packet::addFlagByte(uint8_t byte)
 {
-	for (u8 i=0; i<8; ++i)
+	for (uint8_t i=0; i<8; ++i)
 	{
-		u8 bit = (byte >> i) & 0x1;
+		uint8_t bit = (byte >> i) & 0x1;
 		m_BitStream.push_back(bit);
 	}
 }
 
-void AX25Packet::addByte(u8 byte)
+void AX25Packet::addByte(uint8_t byte)
 {
-	for (u8 i=0; i<8; ++i)
+	for (uint8_t i=0; i<8; ++i)
 	{
-		u8 bit = (byte >> i) & 0x1;
+		uint8_t bit = (byte >> i) & 0x1;
 
 		m_BitStream.push_back(bit);
 		crcBit(bit);
@@ -134,12 +134,12 @@ void AX25Packet::addByte(u8 byte)
 void AX25Packet::addAddress(const AX25Address& address, bool isLast)
 {
 	const char* callSign = address.m_CallSign;
-	for (u8 i=0; i<6; ++i)
+	for (uint8_t i=0; i<6; ++i)
 		addByte((*callSign ? *callSign++ : ' ') << 1);
 	addByte(((address.m_SSID + '0') << 1) | (isLast ? 0x01 : 0x00));
 }
 
-void AX25Packet::crcBit(u8 bit)
+void AX25Packet::crcBit(uint8_t bit)
 {
 	m_CRC ^= bit;
 	if (m_CRC & 0x1)
@@ -150,15 +150,15 @@ void AX25Packet::crcBit(u8 bit)
 
 ///// transmitter bits /////
 
-const u32 MARK_FREQUENCY = 1200; // Hz
-const u32 SPACE_FREQUENCY = 2200; // Hz
-const u32 BAUD = 1200; // bits per second
+const uint32_t MARK_FREQUENCY = 1200; // Hz
+const uint32_t SPACE_FREQUENCY = 2200; // Hz
+const uint32_t BAUD = 1200; // bits per second
 
-const u32 MARK_SAMPLING_PERIOD  = Sinewave::computeSamplingPeriod(MARK_FREQUENCY);
-const u32 SPACE_SAMPLING_PERIOD = Sinewave::computeSamplingPeriod(SPACE_FREQUENCY);
-const u32 SWITCH_SAMPLING_PERIOD = MARK_SAMPLING_PERIOD ^ SPACE_SAMPLING_PERIOD;
+const uint32_t MARK_SAMPLING_PERIOD  = Sinewave::computeSamplingPeriod(MARK_FREQUENCY);
+const uint32_t SPACE_SAMPLING_PERIOD = Sinewave::computeSamplingPeriod(SPACE_FREQUENCY);
+const uint32_t SWITCH_SAMPLING_PERIOD = MARK_SAMPLING_PERIOD ^ SPACE_SAMPLING_PERIOD;
 
-void AX25Packet::setPTTPin(s16 PTTPin)
+void AX25Packet::setPTTPin(int16_t PTTPin)
 {
 	m_PTTPin = PTTPin;
 	if (m_PTTPin != -1)
@@ -179,7 +179,7 @@ void AX25Packet::transmit(Sinewave* pSinewave)
 	pSinewave->start();
 }
 
-u32 AX25Packet::getTransmissionTime() const
+uint32_t AX25Packet::getTransmissionTime() const
 {
 	return m_BitStream.size() * 1000 / BAUD;
 }

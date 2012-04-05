@@ -2,9 +2,9 @@
 
 //#define PACKET_DEBUGGING
 
-const u8 c_StartDelimeter 			= 0x7E;
-const u8 c_Option_Standard			= 0x00;
-const u8 c_Option_DisableACK                    = 0x01;
+const uint8_t c_StartDelimeter 			= 0x7E;
+const uint8_t c_Option_Standard			= 0x00;
+const uint8_t c_Option_DisableACK                    = 0x01;
 
 XTendAPI::XTendAPI(Stream* pStream) :
 	m_pStream(pStream),
@@ -12,17 +12,17 @@ XTendAPI::XTendAPI(Stream* pStream) :
 {
 }
 
-void XTendAPI::SendTo(const Address& dest, const u8* data, u16 size)
+void XTendAPI::SendTo(const Address& dest, const uint8_t* data, uint16_t size)
 {
 	TransmitRaw(c_StartDelimeter);                           // packet start byte
 
-	const u16 totalSize = 1 + 1 + 2 + 1 + size;
-	TransmitRawSwapped((const u8*)&totalSize, 2);            // total packet size
+	const uint16_t totalSize = 1 + 1 + 2 + 1 + size;
+	TransmitRawSwapped((const uint8_t*)&totalSize, 2);            // total packet size
 
-	u8 cksum = 0;
+	uint8_t cksum = 0;
 	cksum += TransmitRaw(c_APIIdentifier_Transmit);          // transmit request
 	cksum += TransmitRaw(0x00);                              // frame ID (zero = no ack)
-	cksum += TransmitRawSwapped((const u8*)&dest, 2);        // dest 16bit address
+	cksum += TransmitRawSwapped((const uint8_t*)&dest, 2);        // dest 16bit address
 	cksum += TransmitRaw(c_Option_DisableACK);               // option
 	cksum += TransmitRaw(data, size);                        // payload
 
@@ -38,7 +38,7 @@ bool XTendAPI::Receive(const XTendAPI::Frame** ppFrame)
 		if (m_pStream->available() < 1)
 			return false;
 
-		if ((u8)m_pStream->read() == c_StartDelimeter)
+		if ((uint8_t)m_pStream->read() == c_StartDelimeter)
 		{
 			m_Frame.m_Checksum = 0;
 			m_NextSection = ENextSection::PacketLength;
@@ -50,7 +50,7 @@ bool XTendAPI::Receive(const XTendAPI::Frame** ppFrame)
 		if (m_pStream->available() < 2)
 			return false;
 
-		ReceiveRawSwapped((u8*)&m_Frame.m_Length, sizeof(m_Frame.m_Length));
+		ReceiveRawSwapped((uint8_t*)&m_Frame.m_Length, sizeof(m_Frame.m_Length));
 		m_LengthRemaining = m_Frame.m_Length;
 		
 		if (m_LengthRemaining < 1)
@@ -95,7 +95,7 @@ bool XTendAPI::Receive(const XTendAPI::Frame** ppFrame)
 		if (m_pStream->available() < 2 + 1 + 1)
 			return false;
 
-		m_Frame.m_Checksum += ReceiveRawSwapped((u8*)&m_Frame.m_SrcAddress, sizeof(m_Frame.m_SrcAddress));
+		m_Frame.m_Checksum += ReceiveRawSwapped((uint8_t*)&m_Frame.m_SrcAddress, sizeof(m_Frame.m_SrcAddress));
 		m_Frame.m_Checksum += ReceiveRaw(m_Frame.m_RSSI);
 		m_Frame.m_Checksum += ReceiveRaw(m_Frame.m_Options);
 		m_LengthRemaining -= 2 + 1 + 1;
@@ -131,7 +131,7 @@ bool XTendAPI::Receive(const XTendAPI::Frame** ppFrame)
 		if (m_pStream->available() < 1)
 			return false;
 			
-		u8 computedChecksum = m_Frame.m_Checksum;
+		uint8_t computedChecksum = m_Frame.m_Checksum;
 		m_Frame.m_Checksum = m_pStream->read();
 
 		bool checksumPassed = (m_Frame.m_Checksum == 0xFF - computedChecksum);
@@ -162,46 +162,46 @@ bool XTendAPI::Receive(const XTendAPI::Frame** ppFrame)
 	return false;
 }
 
-u8 XTendAPI::TransmitRaw(u8 data)
+uint8_t XTendAPI::TransmitRaw(uint8_t data)
 {
 	m_pStream->write(data);
 	return data;
 }
 
-u8 XTendAPI::TransmitRaw(const u8* data, u16 size)
+uint8_t XTendAPI::TransmitRaw(const uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += TransmitRaw(data[i]);
 	return sum;
 }
 
-u8 XTendAPI::TransmitRawSwapped(const u8* data, u16 size)
+uint8_t XTendAPI::TransmitRawSwapped(const uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += TransmitRaw(data[size - 1 - i]);
 	return sum;
 }
 
-u8 XTendAPI::ReceiveRaw(u8& data)
+uint8_t XTendAPI::ReceiveRaw(uint8_t& data)
 {
 	data = m_pStream->read();
 	return data;
 }
 
-u8 XTendAPI::ReceiveRaw(u8* data, u16 size)
+uint8_t XTendAPI::ReceiveRaw(uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += ReceiveRaw(data[i]);
 	return sum;
 }
 
-u8 XTendAPI::ReceiveRawSwapped(u8* data, u16 size)
+uint8_t XTendAPI::ReceiveRawSwapped(uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += ReceiveRaw(data[size - 1 - i]);
 	return sum;
 }

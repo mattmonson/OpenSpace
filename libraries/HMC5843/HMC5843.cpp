@@ -3,13 +3,13 @@
 
 namespace
 {
-	const u8 I2C_ADDRESS = 0x1E;
+	const uint8_t I2C_ADDRESS = 0x1E;
 
-	const u8 REGISTER_CONFIG_A  = 0x00;
-	const u8 REGISTER_CONFIG_B  = 0x01;
-	const u8 REGISTER_MODE      = 0x02;
+	const uint8_t REGISTER_CONFIG_A  = 0x00;
+	const uint8_t REGISTER_CONFIG_B  = 0x01;
+	const uint8_t REGISTER_MODE      = 0x02;
 
-	const u16 RANGE_COUNTS_PER_GAUSS[] = { 1620, 1300, 970, 780, 530, 460, 390, 280 };
+	const uint16_t RANGE_COUNTS_PER_GAUSS[] = { 1620, 1300, 970, 780, 530, 460, 390, 280 };
 }
 
 HMC5843::HMC5843() :
@@ -25,9 +25,9 @@ void HMC5843::setup(EOutputRate::Enum outputRate, EBias::Enum bias, EConversionM
 	conversionMode = (EConversionMode::Enum)Clamp((int)conversionMode, 0, EConversionMode::EnumCount-1);
 	m_Range =        (ERange::Enum)         Clamp((int)range,          0, ERange::EnumCount-1);
 
-	u8 configA = (outputRate << 2) | bias;
-	u8 configB = (m_Range << 5);
-	u8 mode = conversionMode;
+	uint8_t configA = (outputRate << 2) | bias;
+	uint8_t configB = (m_Range << 5);
+	uint8_t mode = conversionMode;
 
 	Wire.beginTransmission(I2C_ADDRESS);
 	Wire.write((uint8_t)0x00);
@@ -39,11 +39,11 @@ void HMC5843::setup(EOutputRate::Enum outputRate, EBias::Enum bias, EConversionM
 
 void HMC5843::loop()
 {
-	Wire.requestFrom(I2C_ADDRESS, (u8)sizeof(m_OutputRaw));
-	m_OutputRaw.x = WireReceiveBigEndian<s16>();
-	m_OutputRaw.y = WireReceiveBigEndian<s16>();
-	m_OutputRaw.z = WireReceiveBigEndian<s16>();
-	m_OutputRaw.status = WireReceiveBigEndian<u8>();
+	Wire.requestFrom(I2C_ADDRESS, (uint8_t)sizeof(m_OutputRaw));
+	m_OutputRaw.x = WireReceiveBigEndian<int16_t>();
+	m_OutputRaw.y = WireReceiveBigEndian<int16_t>();
+	m_OutputRaw.z = WireReceiveBigEndian<int16_t>();
+	m_OutputRaw.status = WireReceiveBigEndian<uint8_t>();
 }
 
 HMC5843::OutputRaw HMC5843::GetOutputRaw() const
@@ -54,5 +54,5 @@ HMC5843::OutputRaw HMC5843::GetOutputRaw() const
 vec3 HMC5843::GetOutput() const
 {
 	// convert to real units
-	return vec3(m_OutputRaw.x, m_OutputRaw.y, m_OutputRaw.z) / (f32)RANGE_COUNTS_PER_GAUSS[m_Range];
+	return vec3(m_OutputRaw.x, m_OutputRaw.y, m_OutputRaw.z) / (float)RANGE_COUNTS_PER_GAUSS[m_Range];
 }

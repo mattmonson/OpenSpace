@@ -10,52 +10,52 @@
 #include "Config.h"
 #include "Packets.h"
 
-u32 lastFrameTime = 0;
+uint32_t lastFrameTime = 0;
 
 TinyGPS gps;
 
 XTendAPI xtend(&XTendSerial);
 
-u32 loggingLastSend = 0;
-u32 lcdLastSend = 0;
+uint32_t loggingLastSend = 0;
+uint32_t lcdLastSend = 0;
 bool lcdPageButtonPressed = false;
-u32 lcdPageButtonLastChange = 0;
-u32 lcdPage = LCDPageCount;
+uint32_t lcdPageButtonLastChange = 0;
+uint32_t lcdPage = LCDPageCount;
 
-u32 pingLastSend = 0;
-u32 pingSendCount = 0;
-u32 pingReceiveCount = 0;
-u32 pingRTT = 0;
-u32 pingRTTMin = 0;
-u32 pingRTTMax = 0;
+uint32_t pingLastSend = 0;
+uint32_t pingSendCount = 0;
+uint32_t pingReceiveCount = 0;
+uint32_t pingRTT = 0;
+uint32_t pingRTTMin = 0;
+uint32_t pingRTTMax = 0;
 
-u32 telemetryReceiveCount = 0;
-u32 latestTelemetryReceiveTime = 0;
+uint32_t telemetryReceiveCount = 0;
+uint32_t latestTelemetryReceiveTime = 0;
 TelemetryPacket latestTelemetryPacket;
 
-u8 latestSignalStrength = 0;
+uint8_t latestSignalStrength = 0;
 
 // data for tracking the ascent rate
 struct AscentRateData
 {
 	AscentRateData() { m_Time = 0; }
 
-	u32 m_Time;
-	f32 m_Alt;
-	f32 m_AscentRate;
+	uint32_t m_Time;
+	float m_Alt;
+	float m_AscentRate;
 };
 
 AscentRateData ascentRateData[_countof(AscentTrackingIntervals)];
 
 
 
-void xtendReceive(u32 now);
-void handlePong(u32 now, const PongPacket& packet);
-void handleTelemetry(u32 now, const TelemetryPacket& packet);
+void xtendReceive(uint32_t now);
+void handlePong(uint32_t now, const PongPacket& packet);
+void handleTelemetry(uint32_t now, const TelemetryPacket& packet);
 void transmitHeadings();
-void transmitLogging(u32 now);
-void transmitLCD(u32 now);
-void transmitPing(u32 now);
+void transmitLogging(uint32_t now);
+void transmitLCD(uint32_t now);
+void transmitPing(uint32_t now);
 
 void setup()
 {
@@ -80,7 +80,7 @@ void setup()
 	
 	delay(1000);
 
-	u32 now = millis();
+	uint32_t now = millis();
 	lastFrameTime = now;
 	loggingLastSend = now - LoggingStagger;
 	lcdLastSend = now - LCDStagger;
@@ -93,8 +93,8 @@ void setup()
 
 void loop()
 {
-	u32 now = millis();
-	f32 dt = (now - lastFrameTime) * 0.001f;
+	uint32_t now = millis();
+	float dt = (now - lastFrameTime) * 0.001f;
 	lastFrameTime = now;
 
 	//digitalWrite(13, (now / 250) % 2);
@@ -128,7 +128,7 @@ void loop()
 	//	transmitPing(now);
 }
 
-void xtendReceive(u32 now)
+void xtendReceive(uint32_t now)
 {
 	const XTendAPI::Frame* pFrame;
 	while (xtend.Receive(&pFrame))
@@ -153,7 +153,7 @@ void xtendReceive(u32 now)
 	}
 }
 
-void handlePong(u32 now, const PongPacket& packet)
+void handlePong(uint32_t now, const PongPacket& packet)
 {
 	pingRTT = millis() - packet.time;
 	
@@ -174,13 +174,13 @@ void handlePong(u32 now, const PongPacket& packet)
 	transmitLCD(now);
 }
 
-void handleTelemetry(u32 now, const TelemetryPacket& packet)
+void handleTelemetry(uint32_t now, const TelemetryPacket& packet)
 {
 	++telemetryReceiveCount;
 	latestTelemetryReceiveTime = now;
 	latestTelemetryPacket = packet;
 
-	for (u32 i=0; i<_countof(AscentTrackingIntervals); ++i)
+	for (uint32_t i=0; i<_countof(AscentTrackingIntervals); ++i)
 	{
 		if (ascentRateData[i].m_Time == 0)
 		{
@@ -189,7 +189,7 @@ void handleTelemetry(u32 now, const TelemetryPacket& packet)
 		}
 		else if (now >= ascentRateData[i].m_Time + AscentTrackingIntervals[i])
 		{
-			f32 interval = (now - ascentRateData[i].m_Time) / 1000.0f;
+			float interval = (now - ascentRateData[i].m_Time) / 1000.0f;
 			ascentRateData[i].m_AscentRate = (packet.gpsAlt - ascentRateData[i].m_Alt) / interval;
 
 			ascentRateData[i].m_Time = now;
@@ -213,7 +213,7 @@ void handleTelemetry(u32 now, const TelemetryPacket& packet)
 	Serial.print(packet.gpsAlt);
 	Serial.print(',');
 
-	for (u32 i=0; i<_countof(AscentTrackingIntervals); ++i)
+	for (uint32_t i=0; i<_countof(AscentTrackingIntervals); ++i)
 	{
 		Serial.print(ascentRateData[i].m_AscentRate, 3);
 		Serial.print(',');
@@ -268,7 +268,7 @@ void transmitHeadings()
 	Serial.print("gpsLon (deg),");
 	Serial.print("gpsAlt (m),");
 
-	for (u32 i=0; i<_countof(AscentTrackingIntervals); ++i)
+	for (uint32_t i=0; i<_countof(AscentTrackingIntervals); ++i)
 	{
 		Serial.print("gpsAsc (m/s@");
 		Serial.print(AscentTrackingIntervals[i] / 1000);
@@ -285,7 +285,7 @@ void transmitHeadings()
 	Serial.println();
 }
 
-void transmitLogging(u32 now)
+void transmitLogging(uint32_t now)
 {
 	loggingLastSend = now;
 
@@ -293,8 +293,8 @@ void transmitLogging(u32 now)
 	Serial.print(now);	
 	Serial.print(',');
 
-	u8 hours, minutes, seconds, hundredths;
-	f32 lat, lon;
+	uint8_t hours, minutes, seconds, hundredths;
+	float lat, lon;
 	gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, &hundredths);
 	gps.f_get_position(&lat, &lon);
 
@@ -341,7 +341,7 @@ void transmitLogging(u32 now)
 	Serial.println();
 }
 
-void transmitLCD(u32 now)
+void transmitLCD(uint32_t now)
 {
 	lcdLastSend = now;
 
@@ -375,7 +375,7 @@ void transmitLCD(u32 now)
 		LCDSerial.print(c_GoToLine2);
 		LCDSerial.print("Asc ");
 
-		for (u32 i=0; i<_countof(AscentTrackingIntervals); ++i)
+		for (uint32_t i=0; i<_countof(AscentTrackingIntervals); ++i)
 		{
 			if (i)
 			{
@@ -465,7 +465,7 @@ void transmitLCD(u32 now)
 	}
 }
 
-void transmitPing(u32 now)
+void transmitPing(uint32_t now)
 {
 	pingLastSend = now;
 	
@@ -474,6 +474,6 @@ void transmitPing(u32 now)
 
 	++pingSendCount;
 
-	xtend.SendTo(XTendDest, (u8*)&packet, sizeof(packet));
+	xtend.SendTo(XTendDest, (uint8_t*)&packet, sizeof(packet));
 }
 

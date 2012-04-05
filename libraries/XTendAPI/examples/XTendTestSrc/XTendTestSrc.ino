@@ -9,12 +9,12 @@
 #define XTendSerial Serial2
 #define XTendPTTPin 23
 
-u32 lastFrameTime = 0;
+uint32_t lastFrameTime = 0;
 FPS fps(0);
 
 XTendAPI xtend(&XTendSerial);
 const XTendAPI::Address xtendDest = 0x5854;
-u32 xtendLastSend = 0;
+uint32_t xtendLastSend = 0;
 
 GPS gps(&GPSSerial);
 
@@ -32,15 +32,15 @@ void setup()
 	// setup the sensors
 	gps.setup(115200);
 
-	u32 now = millis();
+	uint32_t now = millis();
 	lastFrameTime = now;
 	xtendLastSend = now;
 }
 
 void loop()
 {
-	u32 now = millis();
-	f32 dt = (now - lastFrameTime) * 0.001f;
+	uint32_t now = millis();
+	float dt = (now - lastFrameTime) * 0.001f;
 	lastFrameTime = now;
 
 	fps.increment();
@@ -51,7 +51,7 @@ void loop()
 	if (now - xtendLastSend > 1000)
 	{
 		serprintf(Serial, "Sending: %lu\n", now);
-		xtend.SendTo(xtendDest, (u8*)&now, sizeof(now));
+		xtend.SendTo(xtendDest, (uint8_t*)&now, sizeof(now));
 		
 		xtendLastSend = now;
 	}

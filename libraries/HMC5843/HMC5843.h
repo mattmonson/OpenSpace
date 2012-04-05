@@ -14,8 +14,8 @@ public:
 
 	struct OutputRaw
 	{
-		s16 x, y, z;
-		u8 status;
+		int16_t x, y, z;
+		uint8_t status;
 	};
 
 public:

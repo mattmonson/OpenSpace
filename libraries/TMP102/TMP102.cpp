@@ -3,15 +3,15 @@
 
 namespace
 {
-	const u8 I2C_ADDRESS_GND = 0x48; // ADD0 = Ground
-	const u8 I2C_ADDRESS_V   = 0x49; // ADD0 = V+
-	const u8 I2C_ADDRESS_SDA = 0x50; // ADD0 = SDA
-	const u8 I2C_ADDRESS_SCL = 0x51; // ADD0 = SCL
+	const uint8_t I2C_ADDRESS_GND = 0x48; // ADD0 = Ground
+	const uint8_t I2C_ADDRESS_V   = 0x49; // ADD0 = V+
+	const uint8_t I2C_ADDRESS_SDA = 0x50; // ADD0 = SDA
+	const uint8_t I2C_ADDRESS_SCL = 0x51; // ADD0 = SCL
 	
-	const u8 REGISTER_TEMP 		= 0x00;
-	const u8 REGISTER_CONFIG	= 0x01;
-	const u8 REGISTER_TLOW		= 0x02;
-	const u8 REGISTER_THIGH		= 0x03;
+	const uint8_t REGISTER_TEMP 		= 0x00;
+	const uint8_t REGISTER_CONFIG	= 0x01;
+	const uint8_t REGISTER_TLOW		= 0x02;
+	const uint8_t REGISTER_THIGH		= 0x03;
 }
 
 TMP102::TMP102(EAddress::Enum addr) :
@@ -43,16 +43,16 @@ struct ConfigRegister
 	{
 	}
 	 
-	u16 Reserved : 4;
-	u16 ExtendedMode : 1;
-	u16 Alert : 1;
-	u16 ConversionRate : 2;
-	u16 ShutdownMode : 1;
-	u16 Thermostat : 1;
-	u16 Polarity : 1;
-	u16 FaultQueue : 2;
-	u16 ConverterResolution : 2;
-	u16 OneShotConversionReady : 1;
+	uint16_t Reserved : 4;
+	uint16_t ExtendedMode : 1;
+	uint16_t Alert : 1;
+	uint16_t ConversionRate : 2;
+	uint16_t ShutdownMode : 1;
+	uint16_t Thermostat : 1;
+	uint16_t Polarity : 1;
+	uint16_t FaultQueue : 2;
+	uint16_t ConverterResolution : 2;
+	uint16_t OneShotConversionReady : 1;
 };
 
 void TMP102::setup(bool extendedMode, EConversionRate::Enum conversionRate)
@@ -63,7 +63,7 @@ void TMP102::setup(bool extendedMode, EConversionRate::Enum conversionRate)
 
 	Wire.beginTransmission(m_Address);
 	Wire.write(REGISTER_CONFIG);
-	WireSendBigEndian((u8*)&config, sizeof(config));
+	WireSendBigEndian((uint8_t*)&config, sizeof(config));
 	Wire.endTransmission();
 	
 	Wire.beginTransmission(m_Address);
@@ -73,8 +73,8 @@ void TMP102::setup(bool extendedMode, EConversionRate::Enum conversionRate)
 
 void TMP102::loop()
 {
-	Wire.requestFrom(m_Address, (u8)2);
-	s16 reg = WireReceiveBigEndian<s16>();
+	Wire.requestFrom(m_Address, (uint8_t)2);
+	int16_t reg = WireReceiveBigEndian<int16_t>();
 	
 	if (reg & 0x0001)
 		m_RawTemp = reg >> 3; // Extended Mode, 13 bits of temp
@@ -82,12 +82,12 @@ void TMP102::loop()
 		m_RawTemp = reg >> 4; // Normal Mode, 12 bits of temp
 }
 
-s16 TMP102::GetRawTemp() const
+int16_t TMP102::GetRawTemp() const
 {
 	return m_RawTemp;
 }
 
-f32 TMP102::GetTemp() const
+float TMP102::GetTemp() const
 {
 	return m_RawTemp * 0.0625f;
 }

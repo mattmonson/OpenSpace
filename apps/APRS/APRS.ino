@@ -9,49 +9,49 @@
 #include <Wire.h>
 
 #define LoggingInterval 1000ul
-u32 loggingLastSend = 0;
+uint32_t loggingLastSend = 0;
 
-u32 lastFrameTime = 0;
+uint32_t lastFrameTime = 0;
 FPS fps(0);
 
 #define BatteryMonitorPin A3
-f32 batteryVoltage = 0.0f;
-f32 batteryVoltageSmooth = 0.0f;
+float batteryVoltage = 0.0f;
+float batteryVoltageSmooth = 0.0f;
 
 #define ThermistorPins {A1, A2}
 Thermistor therms[2] = ThermistorPins;
-f32 thermTempsFiltered[_countof(therms)];
+float thermTempsFiltered[_countof(therms)];
 
 TinyGPS gps;
 
 // data for tracking the ascent rate
-const u32 c_AscentRateInterval = 15000ul;
-u32 ascentRateTime = 0;
-f32 ascentRateAlt = 0.0f;
-f32 ascentRate = 0.0f;
+const uint32_t c_AscentRateInterval = 15000ul;
+uint32_t ascentRateTime = 0;
+float ascentRateAlt = 0.0f;
+float ascentRate = 0.0f;
 
 #define APRSPTTPin 2
 #define APRSTXPin 3
 AX25Packet packet;
 Sinewave sinewave(&OCR2B, 256, 0xFF);
-u32 msgNum = 0;
+uint32_t msgNum = 0;
 
 const AX25Address c_SrcAddress = {"KF7OCC", 11};
 const AX25Address c_FullPath[] = {
 	{"WIDE1", 1},
 	{"WIDE2", 1},
 };
-const u8 c_FullPathCount = sizeof(c_FullPath) / sizeof(c_FullPath[0]);
+const uint8_t c_FullPathCount = sizeof(c_FullPath) / sizeof(c_FullPath[0]);
 
-const f32 c_HighAltitudeCutoff = 1500.0f;
+const float c_HighAltitudeCutoff = 1500.0f;
 
-const u32 TransmitPeriod = 81000ul;
-u32 lastTransmit = 0;
+const uint32_t TransmitPeriod = 81000ul;
+uint32_t lastTransmit = 0;
 
 
 void transmitLoggingHeadings();
-void transmitLogging(u32 now);
-void transmitAPRS(u32 now);
+void transmitLogging(uint32_t now);
+void transmitAPRS(uint32_t now);
 
 void setup()
 {
@@ -66,7 +66,7 @@ void setup()
 	batteryVoltage = analogRead(BatteryMonitorPin) / 1023.0f * 5.0f;
 	batteryVoltageSmooth = batteryVoltage;
 
-	for (u8 i=0; i<_countof(therms); ++i)
+	for (uint8_t i=0; i<_countof(therms); ++i)
 		thermTempsFiltered[i] = therms[i].getTemp();
 
 	packet.setPTTPin(APRSPTTPin);
@@ -76,7 +76,7 @@ void setup()
 	TCCR2B = _BV(CS20);
 	OCR2B = 0;
 
-	u32 now = millis();
+	uint32_t now = millis();
 	lastFrameTime = now;
 	loggingLastSend = now;
 	lastTransmit = now - TransmitPeriod + 1000;
@@ -88,8 +88,8 @@ void setup()
 
 void loop()
 {
-	const u32 now = millis();
-	const f32 dt = (now - lastFrameTime) * 0.001f;
+	const uint32_t now = millis();
+	const float dt = (now - lastFrameTime) * 0.001f;
 	lastFrameTime = now;
 
 	fps.increment();
@@ -99,8 +99,8 @@ void loop()
 	batteryVoltage = analogRead(BatteryMonitorPin) / 1023.0f * 5.0f;
 	batteryVoltageSmooth = LowPassFilter(batteryVoltage, batteryVoltageSmooth, dt, 2.5f);
 
-	for (u8 i=0; i<_countof(therms); ++i)
-		thermTempsFiltered[i] = LowPassFilter((f32)therms[i].getTemp(), thermTempsFiltered[i], dt, 2.5f);
+	for (uint8_t i=0; i<_countof(therms); ++i)
+		thermTempsFiltered[i] = LowPassFilter((float)therms[i].getTemp(), thermTempsFiltered[i], dt, 2.5f);
 
 	while (Serial.available())
 		gps.encode((char)Serial.read());
@@ -115,7 +115,7 @@ void loop()
 		}
 		else if (now - ascentRateTime > c_AscentRateInterval)
 		{
-			const f32 alt = gps.f_altitude();
+			const float alt = gps.f_altitude();
 			ascentRate = (alt - ascentRateAlt) * 1000 / (now - ascentRateTime);
 			ascentRateTime = now;
 			ascentRateAlt = alt;
@@ -146,13 +146,13 @@ void transmitLoggingHeadings()
 	Serial.print("gpsSpeed (m/s),");
 	Serial.print("gpsSats,");
 	
-	for (u8 i=0; i<_countof(therms); ++i)
+	for (uint8_t i=0; i<_countof(therms); ++i)
 		serprintf(Serial, "thermistor%hu (deg C),", i);
 	
 	Serial.println();
 }
 
-void transmitLogging(u32 now)
+void transmitLogging(uint32_t now)
 {
 	loggingLastSend = now;
 
@@ -162,8 +162,8 @@ void transmitLogging(u32 now)
 	Serial.print(batteryVoltageSmooth, 3);
 	Serial.print(',');
 
-	u8 hours, minutes, seconds, hundredths;
-	f32 lat, lon;
+	uint8_t hours, minutes, seconds, hundredths;
+	float lat, lon;
 	gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, &hundredths);
 	gps.f_get_position(&lat, &lon);
 
@@ -190,7 +190,7 @@ void transmitLogging(u32 now)
 	Serial.print(gps.satellites());
 	Serial.print(',');
 
-	for (u8 i=0; i<_countof(therms); ++i)
+	for (uint8_t i=0; i<_countof(therms); ++i)
 	{
 		Serial.print(thermTempsFiltered[i], 2);
 		Serial.print(',');
@@ -199,19 +199,19 @@ void transmitLogging(u32 now)
 	Serial.println();
 }
 
-void transmitAPRS(u32 now)
+void transmitAPRS(uint32_t now)
 {
 	lastTransmit = now;
 	++msgNum;
 
-	u8 hours, minutes, seconds;
-	f32 lat, lon;
+	uint8_t hours, minutes, seconds;
+	float lat, lon;
 
 	gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, NULL, NULL);
 	gps.f_get_position(&lat, &lon, NULL);
-	f32 course = gps.f_course();
-	f32 speed = gps.f_speed_mps();
-	f32 alt = gps.f_altitude();
+	float course = gps.f_course();
+	float speed = gps.f_speed_mps();
+	float alt = gps.f_altitude();
 
 	AX25Address dest = {"APRS", 0};
 	char msg[256];
@@ -231,11 +231,11 @@ void transmitAPRS(u32 now)
 
 		sprintf(msg, "%sTi=%ld/Te=%ld/V=%ld.%.2ld/A'=%.2ld/#%lu", 
 			miceInfo,
-			(s32)thermTempsFiltered[0],
-			(s32)thermTempsFiltered[1],
-			(s32)fabs(batteryVoltageSmooth),
-			(s32)fabs(batteryVoltageSmooth * 100) % 100,
-			(s32)(ascentRate * 10),
+			(int32_t)thermTempsFiltered[0],
+			(int32_t)thermTempsFiltered[1],
+			(int32_t)fabs(batteryVoltageSmooth),
+			(int32_t)fabs(batteryVoltageSmooth * 100) % 100,
+			(int32_t)(ascentRate * 10),
 			msgNum
 		);
 	}
@@ -245,26 +245,26 @@ void transmitAPRS(u32 now)
 			hours,
 			minutes,
 			seconds,
-			(s16)fabs(lat),
-			(s32)fabs(lat * 60) % 60,
-			(s32)fabs(lat * 60 * 100) % 100,
+			(int16_t)fabs(lat),
+			(int32_t)fabs(lat * 60) % 60,
+			(int32_t)fabs(lat * 60 * 100) % 100,
 			lat > 0 ? 'N' : 'S',
-			(s16)fabs(lon),
-			(s32)fabs(lon * 60) % 60,
-			(s32)fabs(lon * 60 * 100) % 100,
+			(int16_t)fabs(lon),
+			(int32_t)fabs(lon * 60) % 60,
+			(int32_t)fabs(lon * 60 * 100) % 100,
 			lon > 0 ? 'E' : 'W',
-			(s32)course,
-			(s32)METERS_PER_SECOND_TO_KNOTS(speed),
-			(s32)METERS_TO_FEET(max(alt, 0.0f)),
-			(s32)thermTempsFiltered[0],
-			(s32)thermTempsFiltered[1],
-			(s32)fabs(batteryVoltageSmooth),
-			(s32)fabs(batteryVoltageSmooth * 100) % 100,
+			(int32_t)course,
+			(int32_t)METERS_PER_SECOND_TO_KNOTS(speed),
+			(int32_t)METERS_TO_FEET(max(alt, 0.0f)),
+			(int32_t)thermTempsFiltered[0],
+			(int32_t)thermTempsFiltered[1],
+			(int32_t)fabs(batteryVoltageSmooth),
+			(int32_t)fabs(batteryVoltageSmooth * 100) % 100,
 			msgNum
 		);
 	}
 
-	const u8 pathCount = alt >= c_HighAltitudeCutoff ? 0 : c_FullPathCount;
+	const uint8_t pathCount = alt >= c_HighAltitudeCutoff ? 0 : c_FullPathCount;
 
 #if 1
 	serprintf(Serial, "%lu,%s-%d",

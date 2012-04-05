@@ -6,7 +6,7 @@
 class FPS
 {
 public:
-	FPS(u32 targetFrameTime = 0) :
+	FPS(uint32_t targetFrameTime = 0) :
 		m_TargetFrameTime(targetFrameTime),
 		m_FrameCounter(0),
 		m_LastFrameTime(millis()),
@@ -22,7 +22,7 @@ public:
 	void loop()
 	{
 		// wait out the rest of the frame...
-		u32 now = millis();
+		uint32_t now = millis();
 		if (now - m_LastFrameTime + 1 < m_TargetFrameTime)
 			delay(m_TargetFrameTime - (now - m_LastFrameTime + 1));
 
@@ -36,16 +36,16 @@ public:
 		m_LastFrameTime = now;
 	}
 
-	u32 GetFramerate() const
+	uint32_t GetFramerate() const
 	{
 		return m_Framerate;
 	}
 
 protected:
-	u32 m_TargetFrameTime;
-	u32 m_FrameCounter;
-	u32 m_LastFrameTime;
-	u32 m_Framerate;
+	uint32_t m_TargetFrameTime;
+	uint32_t m_FrameCounter;
+	uint32_t m_LastFrameTime;
+	uint32_t m_Framerate;
 };
 
 #endif

@@ -12,8 +12,8 @@ public:
 
 	struct OutputRaw
 	{
-		s16 temp;
-		s16 x, y, z;
+		int16_t temp;
+		int16_t x, y, z;
 	};
 
 public:
@@ -22,15 +22,15 @@ public:
 	void loop();
 
 	void Prime();
-	void UpdateBias(f32 dt);
+	void UpdateBias(float dt);
 	
-	void SetSampleRateDivisor(u8 divisor); // sample rate is F_internal / (divisor + 1), where F_internal is either 1 or 8 kHz
+	void SetSampleRateDivisor(uint8_t divisor);  // sample rate is F_internal / (divisor + 1), where F_internal is either 1 or 8 kHz
 	void SetLowPassFilterConfig(ELowPassFilterConfig::Enum lpfConfig);
 
 	OutputRaw GetOutputRaw() const;
-	f32 GetTemp() const; 				// in C
-	vec3 GetBiasedAngVel() const;		// in deg/S
-	vec3 GetAngVel() const; 			// in deg/S
+	float GetTemp() const;                    // in C
+	vec3 GetBiasedAngVel() const;           // in deg/S
+	vec3 GetAngVel() const;                 // in deg/S
 
 private:
 	OutputRaw m_OutputRaw;

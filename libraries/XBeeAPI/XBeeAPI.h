@@ -8,34 +8,34 @@ class HardwareSerial;
 class XBeeAPI
 {
 public:
-	static const u8 APIIdentifier_Transmit = 0x10;
-	static const u8 APIIdentifier_Receive  = 0x90;
+	static const uint8_t APIIdentifier_Transmit = 0x10;
+	static const uint8_t APIIdentifier_Receive  = 0x90;
 
 	struct Address
 	{
-		u32 m_Low, m_High;
+		uint32_t m_Low, m_High;
 	};
 	
-	typedef u16 AddressShort;
+	typedef uint16_t AddressShort;
 
 	struct Frame
 	{
-		u16 m_Length;
-		u8 m_APIIdentifier;
+		uint16_t m_Length;
+		uint8_t m_APIIdentifier;
 		Address m_SrcAddress;
 		AddressShort m_SrcAddressShort;
-		u8 m_Options;
-		u16 m_PayloadLength;
-		u8 m_Payload[72];
-		u8 m_Checksum;
+		uint8_t m_Options;
+		uint16_t m_PayloadLength;
+		uint8_t m_Payload[72];
+		uint8_t m_Checksum;
 	};
 
 public:
 	XBeeAPI(HardwareSerial* pSerial);
 
-	void setup(u32 baud);
+	void setup(uint32_t baud);
 
-	void SendTo(const Address& dest, const u8* data, u16 size);
+	void SendTo(const Address& dest, const uint8_t* data, uint16_t size);
 	bool Receive(const XBeeAPI::Frame** ppFrame);
 	
 protected:
@@ -55,19 +55,19 @@ protected:
 	};
 	
 protected:
-	u8 TransmitRaw(u8 data);
-	u8 TransmitRaw(const u8* data, u16 size);
-	u8 TransmitRawSwapped(const u8* data, u16 size);
+	uint8_t TransmitRaw(uint8_t data);
+	uint8_t TransmitRaw(const uint8_t* data, uint16_t size);
+	uint8_t TransmitRawSwapped(const uint8_t* data, uint16_t size);
 	
-	u8 ReceiveRaw(u8& data);
-	u8 ReceiveRaw(u8* data, u16 size);
-	u8 ReceiveRawSwapped(u8* data, u16 size);
+	uint8_t ReceiveRaw(uint8_t& data);
+	uint8_t ReceiveRaw(uint8_t* data, uint16_t size);
+	uint8_t ReceiveRawSwapped(uint8_t* data, uint16_t size);
 
 protected:
 	HardwareSerial* m_pSerial;
 	
 	ENextSection::Enum m_NextSection;
-	u16 m_LengthRemaining;
+	uint16_t m_LengthRemaining;
 	Frame m_Frame;
 };
 

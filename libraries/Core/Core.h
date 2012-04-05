@@ -4,24 +4,16 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#define u8 uint8_t
-#define s8 char
-#define u16 unsigned int
-#define s16 int
-#define u32 unsigned long
-#define s32 long
-#define f32 float
-
 #define METERS_PER_SECOND_TO_MILES_PER_HOUR(x) ((x) * 2.23693629f)
 #define METERS_PER_SECOND_TO_KNOTS(x) ((x) * 1.94384449f)
 #define METERS_TO_FEET(x) ((x) * 3.2808399f)
 
 #define _countof(x) (sizeof(x) / sizeof((x)[0]))
 
-f32 sign(f32 x);
-f32 LerpClamp(f32 in, f32 in0, f32 in1, f32 out0, f32 out1);
-f32 LerpClamp(f32 in, f32 in0, f32 in1, f32 in2, f32 out0, f32 out1, f32 out2);
-f32 ModInto(f32 in, f32 min, f32 max);
+float sign(float x);
+float LerpClamp(float in, float in0, float in1, float out0, float out1);
+float LerpClamp(float in, float in0, float in1, float in2, float out0, float out1, float out2);
+float ModInto(float in, float min, float max);
 uintptr_t GetFreeMemory();
 
 template <typename T>
@@ -58,8 +50,8 @@ template <typename T>
 T WireReceiveBigEndian()
 {
 	T t;
-	for (u8 i=0; i<sizeof(T); ++i)
-		reinterpret_cast<u8*>(&t)[sizeof(T) - i - 1] = Wire.read();
+	for (uint8_t i=0; i<sizeof(T); ++i)
+		reinterpret_cast<uint8_t*>(&t)[sizeof(T) - i - 1] = Wire.read();
 	return t;
 }
 
@@ -67,13 +59,13 @@ template <typename T>
 T WireReceiveLittleEndian()
 {
 	T t;
-	for (u8 i=0; i<sizeof(T); ++i)
-		reinterpret_cast<u8*>(&t)[i] = Wire.read();
+	for (uint8_t i=0; i<sizeof(T); ++i)
+		reinterpret_cast<uint8_t*>(&t)[i] = Wire.read();
 	return t;
 }
 
-void WireSendBigEndian(const u8* buffer, u8 size);
-void WireSendLittleEndian(const u8* buffer, u8 size);
+void WireSendBigEndian(const uint8_t* buffer, uint8_t size);
+void WireSendLittleEndian(const uint8_t* buffer, uint8_t size);
 
 template <typename T>
 T pow2(const T& t)
@@ -82,30 +74,30 @@ T pow2(const T& t)
 }
 
 template <typename T>
-T LowPassFilter(const T& input, const T& filtered, f32 dt, f32 timeConstant)
+T LowPassFilter(const T& input, const T& filtered, float dt, float timeConstant)
 {
-	f32 alpha = (dt > 0.0f ? dt / (dt + timeConstant) : 0.0f);
+	float alpha = (dt > 0.0f ? dt / (dt + timeConstant) : 0.0f);
 	//return (1.0f - alpha) * filtered + alpha * input;
 	return filtered + alpha * (input - filtered);
 }
 
 template <typename T>
-T LowPassFilter(const T& input, const T& filtered, f32 alpha)
+T LowPassFilter(const T& input, const T& filtered, float alpha)
 {
 	//return (1.0f - alpha) * filtered + alpha * input;
 	return filtered + alpha * (input - filtered);
 }
 
 template <typename T>
-T HighPassFilter(const T& prevInput, const T& input, const T& filtered, f32 dt, f32 timeConstant)
+T HighPassFilter(const T& prevInput, const T& input, const T& filtered, float dt, float timeConstant)
 {
-	f32 alpha = timeConstant / (timeConstant + dt);
+	float alpha = timeConstant / (timeConstant + dt);
 	//return alpha * filtered + alpha * (input - prevInput);
 	return alpha * (filtered + input - prevInput);
 }
 
 template <typename T>
-T PID(T& prevError, T& integral, const T& target, const T& current, f32 dt, f32 Kp, f32 Ki, f32 Kd, f32 expectedEffectiveness=1.0f)
+T PID(T& prevError, T& integral, const T& target, const T& current, float dt, float Kp, float Ki, float Kd, float expectedEffectiveness=1.0f)
 {
 	const T error = target - current;
 	integral += error * dt * expectedEffectiveness;
@@ -127,7 +119,7 @@ void serprintf(TSerial& serial, const char *fmt, ...)
 	serial.print(buffer);
 }
 
-template <u32 BUFFER_SIZE>
+template <uint32_t BUFFER_SIZE>
 struct BitStream
 {
 public:
@@ -141,14 +133,14 @@ public:
 		m_Size = 0;
 	}
 	
-	u32 size() const
+	uint32_t size() const
 	{
 		return m_Size;
 	}
 	
-	void push_back(u8 bit)
+	void push_back(uint8_t bit)
 	{
-		u8& byte = m_Buffer[m_Size / 8];
+		uint8_t& byte = m_Buffer[m_Size / 8];
 		if (bit)
 			byte |= (1 << (m_Size % 8));
 		else
@@ -156,16 +148,16 @@ public:
 		++m_Size;
 	}
 	
-	u8 operator [] (u32 bitIndex) const
+	uint8_t operator [] (uint32_t bitIndex) const
 	{
 		return (m_Buffer[bitIndex / 8] >> (bitIndex % 8)) & 0x01;
 	}
 	
 	void print() const
 	{
-		for (u32 i=0; i<m_Size; ++i)
+		for (uint32_t i=0; i<m_Size; ++i)
 		{
-			serprintf(Serial, "%hu", (u8)((m_Buffer[i / 8] >> (7 - i % 8)) & 0x1));
+			serprintf(Serial, "%hu", (uint8_t)((m_Buffer[i / 8] >> (7 - i % 8)) & 0x1));
 			// serprintf(Serial, "%hu", (*this)[i]);
 
 			if (i % 8 == 7 || i + 1 == m_Size)
@@ -174,8 +166,8 @@ public:
 	}
 	
 private:
-	u8 m_Buffer[BUFFER_SIZE];
-	u32 m_Size;
+	uint8_t m_Buffer[BUFFER_SIZE];
+	uint32_t m_Size;
 };
 
 #endif

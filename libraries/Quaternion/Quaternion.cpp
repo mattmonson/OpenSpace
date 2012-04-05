@@ -16,7 +16,7 @@ Quaternion::Quaternion(const Quaternion& rhs) :
 {
 }
 
-Quaternion::Quaternion(f32 x, f32 y, f32 z, f32 w) :
+Quaternion::Quaternion(float x, float y, float z, float w) :
 	x(x),
 	y(y),
 	z(z),
@@ -32,7 +32,7 @@ Quaternion::Quaternion(const Matrix<4,1>& m) :
 {
 }
 
-Quaternion::Quaternion(const vec3& axis, f32 angle) :
+Quaternion::Quaternion(const vec3& axis, float angle) :
 	x(sin(angle/2) * axis.x),
 	y(sin(angle/2) * axis.y),
 	z(sin(angle/2) * axis.z),
@@ -40,7 +40,7 @@ Quaternion::Quaternion(const vec3& axis, f32 angle) :
 {
 }
 
-Quaternion::Quaternion(f32 roll, f32 pitch, f32 yaw) :
+Quaternion::Quaternion(float roll, float pitch, float yaw) :
 	x(cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2)),
 	y(sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2)),
 	z(cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2)),
@@ -48,19 +48,19 @@ Quaternion::Quaternion(f32 roll, f32 pitch, f32 yaw) :
 {
 }
 
-f32 Quaternion::LengthSq() const
+float Quaternion::LengthSq() const
 {
 	return x*x + y*y + z*z + w*w;
 }
 
-f32 Quaternion::Length() const
+float Quaternion::Length() const
 {
 	return sqrt(x*x + y*y + z*z + w*w);
 }
 
 void Quaternion::Normalize()
 {
-	f32 lengthSq = LengthSq();
+	float lengthSq = LengthSq();
 	if (lengthSq > 0.0f)
 		*this /= sqrt(lengthSq);
 }
@@ -70,17 +70,17 @@ vec3 Quaternion::GetRollPitchYaw() const
 	return vec3(GetRoll(), GetPitch(), GetYaw());
 }
 
-f32 Quaternion::GetRoll() const
+float Quaternion::GetRoll() const
 {
 	return atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y));
 }
 
-f32 Quaternion::GetPitch() const
+float Quaternion::GetPitch() const
 {
 	return asin(2 * (w * y - z * x));
 }
 
-f32 Quaternion::GetYaw() const
+float Quaternion::GetYaw() const
 {
 	return atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
 }
@@ -193,7 +193,7 @@ Quaternion& Quaternion::operator -= (const Quaternion& rhs)
 	return *this;
 }
 
-Quaternion& Quaternion::operator *= (const f32 rhs)
+Quaternion& Quaternion::operator *= (const float rhs)
 {
 	x *= rhs;
 	y *= rhs;
@@ -202,7 +202,7 @@ Quaternion& Quaternion::operator *= (const f32 rhs)
 	return *this;
 }
 
-Quaternion& Quaternion::operator /= (const f32 rhs)
+Quaternion& Quaternion::operator /= (const float rhs)
 {
 	x /= rhs;
 	y /= rhs;
@@ -232,17 +232,17 @@ Quaternion operator * (const Quaternion& lhs, const Quaternion& rhs)
 	);
 }
 
-Quaternion operator * (const Quaternion& lhs, const f32 rhs)
+Quaternion operator * (const Quaternion& lhs, const float rhs)
 {
 	return Quaternion(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs);
 }
 
-Quaternion operator * (const f32 lhs, const Quaternion& rhs)
+Quaternion operator * (const float lhs, const Quaternion& rhs)
 {
 	return Quaternion(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z, lhs * rhs.w);
 }
 
-Quaternion operator / (const Quaternion& lhs, const f32 rhs)
+Quaternion operator / (const Quaternion& lhs, const float rhs)
 {
 	return Quaternion(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs);
 }

@@ -24,7 +24,7 @@ vec3::vec3(const vec3& rhs) :
 {
 }
 
-vec3::vec3(f32 x, f32 y, f32 z) :
+vec3::vec3(float x, float y, float z) :
 	x(x),
 	y(y),
 	z(z)
@@ -38,19 +38,19 @@ vec3::vec3(const Matrix<3,1>& m) :
 {
 }
 
-f32 vec3::LengthSq() const
+float vec3::LengthSq() const
 {
 	return x*x + y*y + z*z;
 }
 
-f32 vec3::Length() const
+float vec3::Length() const
 {
 	return sqrt(x*x + y*y + z*z);
 }
 
 void vec3::Normalize()
 {
-	f32 lengthSq = LengthSq();
+	float lengthSq = LengthSq();
 	if (lengthSq > 0.0f)
 		*this /= sqrt(lengthSq);
 }
@@ -80,7 +80,7 @@ vec3& vec3::operator -= (const vec3& rhs)
 	return *this;
 }
 
-vec3& vec3::operator *= (const f32 rhs)
+vec3& vec3::operator *= (const float rhs)
 {
 	x *= rhs;
 	y *= rhs;
@@ -88,7 +88,7 @@ vec3& vec3::operator *= (const f32 rhs)
 	return *this;
 }
 
-vec3& vec3::operator /= (const f32 rhs)
+vec3& vec3::operator /= (const float rhs)
 {
 	x /= rhs;
 	y /= rhs;
@@ -106,17 +106,17 @@ vec3 operator - (const vec3& lhs, const vec3& rhs)
 	return vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
 }
 
-vec3 operator * (const vec3& lhs, const f32 rhs)
+vec3 operator * (const vec3& lhs, const float rhs)
 {
 	return vec3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
 }
 
-vec3 operator * (const f32 lhs, const vec3& rhs)
+vec3 operator * (const float lhs, const vec3& rhs)
 {
 	return vec3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
 }
 
-vec3 operator / (const vec3& lhs, const f32 rhs)
+vec3 operator / (const vec3& lhs, const float rhs)
 {
 	return vec3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
 }

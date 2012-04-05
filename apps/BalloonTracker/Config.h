@@ -3,12 +3,12 @@
 #include <Core.h>
 #include <XTendAPI.h>
 
-const u32 LoggingInterval = 1000ul;
-const u32 LoggingStagger  = 250ul;
-const u32 LCDInterval     = 1000ul;
-const u32 LCDStagger      = 0ul;
-const u32 PingInterval    = 30000ul;
-const u32 PingStagger     = 500ul;
+const uint32_t LoggingInterval = 1000ul;
+const uint32_t LoggingStagger  = 250ul;
+const uint32_t LCDInterval     = 1000ul;
+const uint32_t LCDStagger      = 0ul;
+const uint32_t PingInterval    = 30000ul;
+const uint32_t PingStagger     = 500ul;
 
 #define LoggingBaud 115200
 
@@ -26,5 +26,5 @@ const u32 PingStagger     = 500ul;
 #define XTendPTTPin 52
 const XTendAPI::Address XTendDest = 0x6905;
 
-const u32 AscentTrackingIntervals[] = {5000, 30000};
+const uint32_t AscentTrackingIntervals[] = {5000, 30000};
 

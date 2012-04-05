@@ -13,12 +13,12 @@ public:
 	void setup(bool extendedMode = false, EConversionRate::Enum conversionRate = EConversionRate::Hz4);
 	void loop();
 	
-	s16 GetRawTemp() const; // in LSB
-	f32 GetTemp() const; // in degrees C
+	int16_t GetRawTemp() const; // in LSB
+	float GetTemp() const; // in degrees C
 
 private:
-	u8 m_Address;
-	s16 m_RawTemp;
+	uint8_t m_Address;
+	int16_t m_RawTemp;
 };
 
 #endif

@@ -18,12 +18,12 @@
 #include "Config.h"
 #include "Packets.h"
 
-u32 lastFrameTime = 0;
+uint32_t lastFrameTime = 0;
 FPS fps(TargetFrameTime);
 
-const f32 c_BatteryVoltageScale = 3.3f / 1024.0f / (3.9 / (3.9 + 1.2));
-f32 batteryVoltage = 0.0f;
-f32 batteryVoltageSmooth = 0.0f;
+const float c_BatteryVoltageScale = 3.3f / 1024.0f / (3.9 / (3.9 + 1.2));
+float batteryVoltage = 0.0f;
+float batteryVoltageSmooth = 0.0f;
 
 TinyGPS gps;
 HMC5843 magneto;
@@ -32,23 +32,23 @@ ITG3200 gyro;
 BMP085 pressure;
 TMP102 tmps[ETMPs::EnumCount] = TMPAddresses;
 Thermistor therms[EThermistors::EnumCount] = ThermistorPins;
-f32 thermTempsFiltered[_countof(therms)];
+float thermTempsFiltered[_countof(therms)];
 
 vec3 accelFiltered(0.0f, 0.0f, -9.8f);
 vec3 angVelFiltered(0.0f, 0.0f, 0.0f);
 
 SoftwareSerial XTendSerial(XTendSerialRXPin, XTendSerialTXPin);
 XTendAPI xtend(&XTendSerial);
-u32 packetNum = 0;
+uint32_t packetNum = 0;
 
-u32 loggingLastSend = 0;
-u32 telemetryLastSend = 0;
+uint32_t loggingLastSend = 0;
+uint32_t telemetryLastSend = 0;
 
 
 void xtendReceive();
 void transmitLoggingHeadings();
-void transmitLogging(u32 now);
-void transmitTelemetry(u32 now);
+void transmitLogging(uint32_t now);
+void transmitTelemetry(uint32_t now);
 
 void setup()
 {
@@ -78,17 +78,16 @@ void setup()
 	gyro.setup();
 	pressure.setup();
 	pressure.SetOversamplingSetting(3);
-	for (u8 i=0; i<ETMPs::EnumCount; ++i)
+	for (uint8_t i=0; i<ETMPs::EnumCount; ++i)
 		tmps[i].setup(true, TMP102::EConversionRate::Hz8);
 
-	for (u8 i=0; i<_countof(therms); ++i)
+	for (uint8_t i=0; i<_countof(therms); ++i)
 		thermTempsFiltered[i] = therms[i].getTemp();
 
+	pressure.SetReferencePressure(101325);
 	pressure.loop();
-	pressure.SetReferencePressure(pressure.GetPressureInPa());
-	serprintf(Serial, "%lu: ReferencePressure(Pa): %ld\n", millis(), pressure.GetPressureInPa());
 
-	u32 now = millis();
+	uint32_t now = millis();
 	lastFrameTime = now;
 	loggingLastSend = now - LoggingStagger;
 	telemetryLastSend = now - TelemetryTransmitStagger;
@@ -100,8 +99,8 @@ void setup()
 
 void loop()
 {
-	const u32 now = millis();
-	const f32 dt = (now - lastFrameTime) * 0.001f;
+	const uint32_t now = millis();
+	const float dt = (now - lastFrameTime) * 0.001f;
 	lastFrameTime = now;
 
 	fps.increment();
@@ -112,8 +111,8 @@ void loop()
 	batteryVoltage = analogRead(BatteryMonitorPin) * c_BatteryVoltageScale;
 	batteryVoltageSmooth = LowPassFilter(batteryVoltage, batteryVoltageSmooth, dt, 2.5f);
 
-	for (u8 i=0; i<_countof(therms); ++i)
-		thermTempsFiltered[i] = LowPassFilter((f32)therms[i].getTemp(), thermTempsFiltered[i], dt, 2.5f);
+	for (uint8_t i=0; i<_countof(therms); ++i)
+		thermTempsFiltered[i] = LowPassFilter((float)therms[i].getTemp(), thermTempsFiltered[i], dt, 2.5f);
 
 	while (GPSSerial.available())
 		gps.encode(GPSSerial.read());
@@ -122,7 +121,7 @@ void loop()
 	accel.loop();
 	gyro.loop();
 	pressure.loopAsync();
-	for (u8 i=0; i<ETMPs::EnumCount; ++i)
+	for (uint8_t i=0; i<ETMPs::EnumCount; ++i)
 		tmps[i].loop();
 
 	accelFiltered = accel.GetOutput();//LowPassFilter(accel.GetOutput(), accelFiltered, dt, 0.25f);
@@ -158,7 +157,7 @@ void xtendReceive()
 					const PingPacket* pPacket = reinterpret_cast<const PingPacket*>(pFrame->m_Payload);
 					PongPacket pong;
 					pong.time = pPacket->time;
-					xtend.SendTo(XTendDest, (u8*)&pong, sizeof(pong));
+					xtend.SendTo(XTendDest, (uint8_t*)&pong, sizeof(pong));
 				}
 				break;
 			}
@@ -188,10 +187,10 @@ void transmitLoggingHeadings()
 	Serial.print("bmpPressure (Pa),");
 	Serial.print("bmpAlt (m),");
 
-	for (u8 i=0; i<EThermistors::EnumCount; ++i)
+	for (uint8_t i=0; i<EThermistors::EnumCount; ++i)
 		serprintf(Serial, "thermistor%hu (deg C),", i);
 	
-	for (u8 i=0; i<ETMPs::EnumCount; ++i)
+	for (uint8_t i=0; i<ETMPs::EnumCount; ++i)
 		serprintf(Serial, "tmp%hu (deg C),", i);
 	
 	Serial.print("gyroTemp (deg C),");
@@ -211,7 +210,7 @@ void transmitLoggingHeadings()
 	Serial.print("\n");
 }
 
-void transmitLogging(u32 now)
+void transmitLogging(uint32_t now)
 {
 	loggingLastSend = now;
 
@@ -223,8 +222,8 @@ void transmitLogging(u32 now)
 	Serial.print(batteryVoltageSmooth, 3);
 	Serial.print(',');
 
-	u8 hours, minutes, seconds, hundredths;
-	f32 lat, lon;
+	uint8_t hours, minutes, seconds, hundredths;
+	float lat, lon;
 	gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, &hundredths);
 	gps.f_get_position(&lat, &lon);
 
@@ -256,13 +255,13 @@ void transmitLogging(u32 now)
 	Serial.print(pressure.GetAltitudeInM(), 3);
 	Serial.print(',');
 	
-	for (u8 i=0; i<EThermistors::EnumCount; ++i)
+	for (uint8_t i=0; i<EThermistors::EnumCount; ++i)
 	{
 		Serial.print(thermTempsFiltered[i], 2);
 		Serial.print(',');
 	}
 	
-	for (u8 i=0; i<ETMPs::EnumCount; ++i)
+	for (uint8_t i=0; i<ETMPs::EnumCount; ++i)
 	{
 		Serial.print(tmps[i].GetTemp(), 3);
 		Serial.print(',');
@@ -296,7 +295,7 @@ void transmitLogging(u32 now)
 	Serial.println();
 }
 
-void transmitTelemetry(u32 now)
+void transmitTelemetry(uint32_t now)
 {
 	telemetryLastSend = now;
 	
@@ -308,14 +307,14 @@ void transmitTelemetry(u32 now)
 	packet.gpsCourse = gps.course() / 100;
 	packet.gpsSpeed = gps.f_speed_mps();
 
-	//packet.tmpInternal = (s8)(tmps[ETMPs::Internal].GetTemp() + 0.5f);
-	//packet.tmpExternal = (s8)(tmps[ETMPs::External].GetTemp() + 0.5f);
-	packet.tmpInternal = (s8)(thermTempsFiltered[EThermistors::Internal] + 0.5f);
-	packet.tmpExternal = (s8)(thermTempsFiltered[EThermistors::External1] + 0.5f);
+	//packet.tmpInternal = (int8_t)(tmps[ETMPs::Internal].GetTemp() + 0.5f);
+	//packet.tmpExternal = (int8_t)(tmps[ETMPs::External].GetTemp() + 0.5f);
+	packet.tmpInternal = (int8_t)(thermTempsFiltered[EThermistors::Internal] + 0.5f);
+	packet.tmpExternal = (int8_t)(thermTempsFiltered[EThermistors::External1] + 0.5f);
 
-	packet.batteryVoltage = (u16)fabs(batteryVoltageSmooth * 1000.0f + 0.5f);
+	packet.batteryVoltage = (uint16_t)fabs(batteryVoltageSmooth * 1000.0f + 0.5f);
 	
-	xtend.SendTo(XTendDest, (u8*)&packet, sizeof(packet));
+	xtend.SendTo(XTendDest, (uint8_t*)&packet, sizeof(packet));
 }
 
 

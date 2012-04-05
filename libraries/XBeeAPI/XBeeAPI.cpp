@@ -9,22 +9,22 @@ XBeeAPI::XBeeAPI(HardwareSerial* pSerial) :
 {
 }
 
-void XBeeAPI::setup(u32 baud)
+void XBeeAPI::setup(uint32_t baud)
 {
 	m_pSerial->begin(baud);
 }
 
-void XBeeAPI::SendTo(const Address& dest, const u8* data, u16 size)
+void XBeeAPI::SendTo(const Address& dest, const uint8_t* data, uint16_t size)
 {
 	TransmitRaw(0x7E);                                       // packet start byte
 
-	const u16 totalSize = 1 + 1 + 8 + 2 + 1 + 1 + size;
-	TransmitRawSwapped((const u8*)&totalSize, 2);            // total packet size
+	const uint16_t totalSize = 1 + 1 + 8 + 2 + 1 + 1 + size;
+	TransmitRawSwapped((const uint8_t*)&totalSize, 2);            // total packet size
 
-	u8 cksum = 0;
+	uint8_t cksum = 0;
 	cksum += TransmitRaw(APIIdentifier_Transmit);            // transmit request
 	cksum += TransmitRaw(0x00);                              // frame ID (zero = no ack)
-	cksum += TransmitRawSwapped((const u8*)&dest, 8); 		 // dest 64bit address
+	cksum += TransmitRawSwapped((const uint8_t*)&dest, 8); 	 // dest 64bit address
 	cksum += TransmitRaw(0xFF);                              // dest 16bit address
 	cksum += TransmitRaw(0xFE);                              // -- 0xFFFE means 'dont know'
 	cksum += TransmitRaw(0x00);                              // broadcast radius, 0x00 means max
@@ -55,7 +55,7 @@ bool XBeeAPI::Receive(const XBeeAPI::Frame** ppFrame)
 		if (m_pSerial->available() < 2)
 			return false;
 
-		ReceiveRawSwapped((u8*)&m_Frame.m_Length, sizeof(m_Frame.m_Length));
+		ReceiveRawSwapped((uint8_t*)&m_Frame.m_Length, sizeof(m_Frame.m_Length));
 		m_LengthRemaining = m_Frame.m_Length;
 		
 		if (m_LengthRemaining < 1)
@@ -100,8 +100,8 @@ bool XBeeAPI::Receive(const XBeeAPI::Frame** ppFrame)
 		if (m_pSerial->available() < 11)
 			return false;
 
-		m_Frame.m_Checksum += ReceiveRawSwapped((u8*)&m_Frame.m_SrcAddress, sizeof(m_Frame.m_SrcAddress));
-		m_Frame.m_Checksum += ReceiveRawSwapped((u8*)&m_Frame.m_SrcAddressShort, sizeof(m_Frame.m_SrcAddressShort));
+		m_Frame.m_Checksum += ReceiveRawSwapped((uint8_t*)&m_Frame.m_SrcAddress, sizeof(m_Frame.m_SrcAddress));
+		m_Frame.m_Checksum += ReceiveRawSwapped((uint8_t*)&m_Frame.m_SrcAddressShort, sizeof(m_Frame.m_SrcAddressShort));
 		m_Frame.m_Checksum += ReceiveRaw(m_Frame.m_Options);
 		m_LengthRemaining -= 11;
 
@@ -136,7 +136,7 @@ bool XBeeAPI::Receive(const XBeeAPI::Frame** ppFrame)
 		if (m_pSerial->available() < 1)
 			return false;
 			
-		u8 computedChecksum = m_Frame.m_Checksum;
+		uint8_t computedChecksum = m_Frame.m_Checksum;
 		m_Frame.m_Checksum = m_pSerial->read();
 
 		bool checksumPassed = (m_Frame.m_Checksum == 0xFF - computedChecksum);
@@ -167,46 +167,46 @@ bool XBeeAPI::Receive(const XBeeAPI::Frame** ppFrame)
 	return false;
 }
 
-u8 XBeeAPI::TransmitRaw(u8 data)
+uint8_t XBeeAPI::TransmitRaw(uint8_t data)
 {
 	m_pSerial->print(data, BYTE);
 	return data;
 }
 
-u8 XBeeAPI::TransmitRaw(const u8* data, u16 size)
+uint8_t XBeeAPI::TransmitRaw(const uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += TransmitRaw(data[i]);
 	return sum;
 }
 
-u8 XBeeAPI::TransmitRawSwapped(const u8* data, u16 size)
+uint8_t XBeeAPI::TransmitRawSwapped(const uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += TransmitRaw(data[size - 1 - i]);
 	return sum;
 }
 
-u8 XBeeAPI::ReceiveRaw(u8& data)
+uint8_t XBeeAPI::ReceiveRaw(uint8_t& data)
 {
 	data = m_pSerial->read();
 	return data;
 }
 
-u8 XBeeAPI::ReceiveRaw(u8* data, u16 size)
+uint8_t XBeeAPI::ReceiveRaw(uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += ReceiveRaw(data[i]);
 	return sum;
 }
 
-u8 XBeeAPI::ReceiveRawSwapped(u8* data, u16 size)
+uint8_t XBeeAPI::ReceiveRawSwapped(uint8_t* data, uint16_t size)
 {
-	u8 sum = 0;
-	for (u16 i=0; i<size; ++i)
+	uint8_t sum = 0;
+	for (uint16_t i=0; i<size; ++i)
 		sum += ReceiveRaw(data[size - 1 - i]);
 	return sum;
 }

@@ -9,7 +9,7 @@
 #define XTendSerial Serial1
 #define XTendPTTPin 2
 
-u32 lastFrameTime = 0;
+uint32_t lastFrameTime = 0;
 FPS fps(0);
 
 XTendAPI xtend(&XTendSerial);
@@ -35,8 +35,8 @@ void setup()
 
 void loop()
 {
-	u32 now = millis();
-	f32 dt = (now - lastFrameTime) * 0.001f;
+	uint32_t now = millis();
+	float dt = (now - lastFrameTime) * 0.001f;
 	lastFrameTime = now;
 
 	fps.increment();
@@ -58,7 +58,7 @@ serprintf(Serial, "SomeKindOfFrame\n");
 			serprintf(Serial, "- Options: %hX\n", pFrame->m_Options);
 			serprintf(Serial, "- PayLen:  %hu\n", pFrame->m_PayloadLength);
 			serprintf(Serial, "- Payload: ");
-			for (u16 i=0; i<pFrame->m_PayloadLength; ++i)
+			for (uint16_t i=0; i<pFrame->m_PayloadLength; ++i)
 				serprintf(Serial, "%.2hX", pFrame->m_Payload[i]);
 			serprintf(Serial, "\n");
 		}

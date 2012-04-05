@@ -10,27 +10,27 @@ struct vec3
 
 	vec3();
 	vec3(const vec3& rhs);
-	vec3(f32 x, f32 y, f32 z);
+	vec3(float x, float y, float z);
 	vec3(const Matrix<3,1>& m);
 
-	f32 LengthSq() const;
-	f32 Length() const;
+	float LengthSq() const;
+	float Length() const;
 	void Normalize();
 
 	Matrix<3,1> ToMatrix() const;
 
 	vec3& operator += (const vec3& rhs);
 	vec3& operator -= (const vec3& rhs);
-	vec3& operator *= (const f32 rhs);
-	vec3& operator /= (const f32 rhs);
+	vec3& operator *= (const float rhs);
+	vec3& operator /= (const float rhs);
 
-	f32 x, y, z;
+	float x, y, z;
 };
 
 vec3 operator + (const vec3& lhs, const vec3& rhs);
 vec3 operator - (const vec3& lhs, const vec3& rhs);
-vec3 operator * (const vec3& lhs, const f32 rhs);
-vec3 operator * (const f32 lhs, const vec3& rhs);
-vec3 operator / (const vec3& lhs, const f32 rhs);
+vec3 operator * (const vec3& lhs, const float rhs);
+vec3 operator * (const float lhs, const vec3& rhs);
+vec3 operator / (const vec3& lhs, const float rhs);
 
 #endif

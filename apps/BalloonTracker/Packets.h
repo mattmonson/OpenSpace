@@ -17,33 +17,33 @@ struct PingPacket
 {
 	PingPacket() : packetType(EPacketType::Ping) {}
 	
-	u8 packetType;
-	u32 time;
+	uint8_t packetType;
+	uint32_t time;
 };
 
 struct PongPacket
 {
 	PongPacket() : packetType(EPacketType::Pong) {}
 	
-	u8 packetType;
-	u32 time;
+	uint8_t packetType;
+	uint32_t time;
 };
 
 struct TelemetryPacket
 {
 	TelemetryPacket() : packetType(EPacketType::Telemetry) {}
 
-	u8 packetType;
-	u16 time;           // in s
+	uint8_t packetType;
+	uint16_t time;           // in s
 
-	f32 gpsLat, gpsLon; // in degrees
-	s32 gpsAlt : 18;    // in m
-	s32 gpsCourse : 10; // in degrees
-	u8 gpsSpeed;        // in m/s
+	float gpsLat, gpsLon; // in degrees
+	int32_t gpsAlt : 18;    // in m
+	int32_t gpsCourse : 10; // in degrees
+	uint8_t gpsSpeed;        // in m/s
 	
-	s8 tmpInternal;     // in deg C
-	s8 tmpExternal;     // in deg C
+	int8_t tmpInternal;     // in deg C
+	int8_t tmpExternal;     // in deg C
 
-	u16 batteryVoltage; // in mV
+	uint16_t batteryVoltage; // in mV
 };
 

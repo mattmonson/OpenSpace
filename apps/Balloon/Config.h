@@ -4,11 +4,11 @@
 //#include <AX25.h>
 #include <XTendAPI.h>
 
-const u32 TargetFrameTime           = 0ul;
-const u32 LoggingInterval           = 100ul;
-const u32 LoggingStagger            = 0ul;
-const u32 TelemetryTransmitInterval = 500ul;
-const u32 TelemetryTransmitStagger  = 250ul;
+const uint32_t TargetFrameTime           = 0ul;
+const uint32_t LoggingInterval           = 100ul;
+const uint32_t LoggingStagger            = 0ul;
+const uint32_t TelemetryTransmitInterval = 500ul;
+const uint32_t TelemetryTransmitStagger  = 250ul;
 
 #define LoggingBaud 115200
 
