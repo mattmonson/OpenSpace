@@ -294,36 +294,53 @@ void transmitLogging(uint32_t now)
 	Serial.print(',');
 
 	uint8_t hours, minutes, seconds, hundredths;
-	float lat, lon;
-	gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, &hundredths);
-	gps.f_get_position(&lat, &lon);
-
-	Serial.print((int)hours);
-	Serial.print(':');
-	Serial.print((int)minutes);
-	Serial.print(':');
-	Serial.print(seconds + 0.01f * hundredths, 2);
-	Serial.print(',');
-	Serial.print(lat, 6);
-	Serial.print(',');
-	Serial.print(lon, 6);
-	Serial.print(',');
-	Serial.print(gps.f_altitude(), 3);
-	Serial.print(',');
-	Serial.print(gps.f_course(), 3);
-	Serial.print(',');
-	Serial.print(TinyGPS::cardinal(gps.f_course()));
-	Serial.print(',');
-	Serial.print(gps.f_speed_mps(), 3);
-	Serial.print(',');
-	Serial.print(gps.satellites());
-	Serial.print(',');
-
-	if (gps.get_has_fix() && telemetryReceiveCount > 0)
+	if (gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, &hundredths))
 	{
-		float lat, lon;
-		gps.f_get_position(&lat, &lon);
+		Serial.print((int)hours);
+		Serial.print(':');
+		Serial.print((int)minutes);
+		Serial.print(':');
+		Serial.print(seconds + 0.01f * hundredths, 2);
+	}
+	Serial.print(',');
 
+	float lat, lon;
+	const bool hasPosition = gps.f_get_position(&lat, &lon);
+
+	if (hasPosition)
+	{
+		Serial.print(lat, 6);
+		Serial.print(',');
+		Serial.print(lon, 6);
+		Serial.print(',');
+		Serial.print(gps.f_altitude(), 3);
+		Serial.print(',');
+		Serial.print(gps.f_course(), 3);
+		Serial.print(',');
+		Serial.print(TinyGPS::cardinal(gps.f_course()));
+		Serial.print(',');
+		Serial.print(gps.f_speed_mps(), 3);
+		Serial.print(',');
+		Serial.print(gps.satellites());
+		Serial.print(',');
+	}
+	else
+	{
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+	}
+
+
+	if (hasPosition && 
+	    telemetryReceiveCount > 0 &&
+	    latestTelemetryPacket.gpsLat != 0.0f &&
+	    latestTelemetryPacket.gpsLon != 0.0f)
+	{
 		Serial.print(TinyGPS::distance_between(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon), 3);
 		Serial.print(',');
 		Serial.print(TinyGPS::course_to(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon), 0);
@@ -397,7 +414,7 @@ void transmitLCD(uint32_t now)
 
 		LCDSerial.print(c_GoToLine2);
 		LCDSerial.print("Car ");
-		if (gps.get_has_fix())
+		if (gps.get_position(NULL, NULL))
 		{
 			LCDSerial.print(gps.f_speed_mps(), 0);
 			LCDSerial.print("m/s ");
@@ -412,10 +429,12 @@ void transmitLCD(uint32_t now)
 	
 	case 3:
 		LCDSerial.print("Rng ");
-		if (gps.get_has_fix() && telemetryReceiveCount > 0)
+		float lat, lon;
+		if (gps.f_get_position(&lat, &lon) && 
+		    telemetryReceiveCount > 0 &&
+		    latestTelemetryPacket.gpsLat != 0.0f &&
+		    latestTelemetryPacket.gpsLon != 0.0f)
 		{
-			float lat, lon;
-			gps.f_get_position(&lat, &lon);
 			LCDSerial.print(TinyGPS::distance_between(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon), 0);
 			LCDSerial.print("m ");
 			LCDSerial.print(TinyGPS::cardinal(TinyGPS::course_to(lat, lon, latestTelemetryPacket.gpsLat, latestTelemetryPacket.gpsLon)));

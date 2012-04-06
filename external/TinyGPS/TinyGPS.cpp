@@ -344,41 +344,40 @@ const char *TinyGPS::cardinal (float course)
   return directions[direction % 16];
 }
 
-bool TinyGPS::get_has_fix() const
-{
-return
-  _last_position_fix != GPS_INVALID_FIX_TIME &&
-  _last_time_fix != GPS_INVALID_FIX_TIME;
-}
-
-
 // lat/long in hundred thousandths of a degree and age of fix in milliseconds
-void TinyGPS::get_position(long *latitude, long *longitude, unsigned long *fix_age)
+bool TinyGPS::get_position(long *latitude, long *longitude, unsigned long *fix_age)
 {
   if (latitude) *latitude = _latitude;
   if (longitude) *longitude = _longitude;
   if (fix_age) *fix_age = _last_position_fix == GPS_INVALID_FIX_TIME ? 
 GPS_INVALID_AGE : millis() - _last_position_fix;
+
+  return _last_position_fix != GPS_INVALID_FIX_TIME;
 }
 
 // date as ddmmyy, time as hhmmsscc, and age in milliseconds
-void TinyGPS::get_datetime(unsigned long *date, unsigned long *time, unsigned long *age)
+bool TinyGPS::get_datetime(unsigned long *date, unsigned long *time, unsigned long *age)
 {
   if (date) *date = _date;
   if (time) *time = _time;
   if (age) *age = _last_time_fix == GPS_INVALID_FIX_TIME ? 
 GPS_INVALID_AGE : millis() - _last_time_fix;
+
+  return _last_time_fix != GPS_INVALID_FIX_TIME;
 }
 
-void TinyGPS::f_get_position(float *latitude, float *longitude, unsigned long *fix_age)
+bool TinyGPS::f_get_position(float *latitude, float *longitude, unsigned long *fix_age)
 {
   long lat, lon;
   get_position(&lat, &lon, fix_age);
-  *latitude = lat == GPS_INVALID_ANGLE ? GPS_INVALID_F_ANGLE : (lat / 100000.0);
-  *longitude = lat == GPS_INVALID_ANGLE ? GPS_INVALID_F_ANGLE : (lon / 100000.0);
+
+  if (latitude) *latitude = lat == GPS_INVALID_ANGLE ? GPS_INVALID_F_ANGLE : (lat / 100000.0);
+  if (longitude) *longitude = lat == GPS_INVALID_ANGLE ? GPS_INVALID_F_ANGLE : (lon / 100000.0);
+
+  return _last_position_fix != GPS_INVALID_FIX_TIME;
 }
 
-void TinyGPS::crack_datetime(int *year, byte *month, byte *day, 
+bool TinyGPS::crack_datetime(int *year, byte *month, byte *day, 
   byte *hour, byte *minute, byte *second, byte *hundredths, unsigned long *age)
 {
   unsigned long date, time;
@@ -394,6 +393,8 @@ void TinyGPS::crack_datetime(int *year, byte *month, byte *day,
   if (minute) *minute = (time / 10000) % 100;
   if (second) *second = (time / 100) % 100;
   if (hundredths) *hundredths = time % 100;
+
+  return _last_time_fix != GPS_INVALID_FIX_TIME;
 }
 
 float TinyGPS::f_altitude()    

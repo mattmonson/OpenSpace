@@ -54,13 +54,11 @@ public:
   bool encode(char c); // process one character received from GPS
   TinyGPS &operator << (char c) {encode(c); return *this;}
 
-  bool get_has_fix() const;
-
   // lat/long in hundred thousandths of a degree and age of fix in milliseconds
-  void get_position(long *latitude, long *longitude, unsigned long *fix_age = 0);
+  bool get_position(long *latitude, long *longitude, unsigned long *fix_age = 0);
 
   // date as ddmmyy, time as hhmmsscc, and age in milliseconds
-  void get_datetime(unsigned long *date, unsigned long *time, unsigned long *age = 0);
+  bool get_datetime(unsigned long *date, unsigned long *time, unsigned long *age = 0);
 
   // signed altitude in centimeters (from GPGGA sentence)
   inline long altitude() { return _altitude; }
@@ -77,8 +75,8 @@ public:
   // horizontal dilution of precision in 100ths
   inline unsigned long hdop() { return _hdop; }
 
-  void f_get_position(float *latitude, float *longitude, unsigned long *fix_age = 0);
-  void crack_datetime(int *year, byte *month, byte *day, 
+  bool f_get_position(float *latitude, float *longitude, unsigned long *fix_age = 0);
+  bool crack_datetime(int *year, byte *month, byte *day, 
     byte *hour, byte *minute, byte *second, byte *hundredths = 0, unsigned long *fix_age = 0);
   float f_altitude();
   float f_course();

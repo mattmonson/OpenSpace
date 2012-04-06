@@ -106,7 +106,7 @@ void loop()
 		gps.encode((char)Serial.read());
 
 	// ascent rate
-	if (gps.get_has_fix())
+	if (gps.get_position(NULL, NULL))
 	{
 		if (ascentRateTime == 0)
 		{
@@ -125,7 +125,7 @@ void loop()
 	// time to transmit?
 	if (now - loggingLastSend >= LoggingInterval)
 		transmitLogging(now);
-	if (now - lastTransmit >= TransmitPeriod && gps.get_has_fix())
+	if (now - lastTransmit >= TransmitPeriod && gps.get_position(NULL, NULL) && gps.get_datetime(NULL, NULL))
 		transmitAPRS(now);
 	
 	fps.loop();
@@ -163,32 +163,47 @@ void transmitLogging(uint32_t now)
 	Serial.print(',');
 
 	uint8_t hours, minutes, seconds, hundredths;
-	float lat, lon;
-	gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, &hundredths);
-	gps.f_get_position(&lat, &lon);
+	if (gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, &hundredths))
+	{
+		Serial.print((int)hours);
+		Serial.print(':');
+		Serial.print((int)minutes);
+		Serial.print(':');
+		Serial.print(seconds + 0.01f * hundredths, 2);
+	}
+	Serial.print(',');
 
-	Serial.print((int)hours);
-	Serial.print(':');
-	Serial.print((int)minutes);
-	Serial.print(':');
-	Serial.print(seconds + 0.01f * hundredths, 2);
-	Serial.print(',');
-	Serial.print(lat, 6);
-	Serial.print(',');
-	Serial.print(lon, 6);
-	Serial.print(',');
-	Serial.print(gps.f_altitude(), 3);
-	Serial.print(',');
-	Serial.print(ascentRate, 3);
-	Serial.print(',');
-	Serial.print(gps.f_course(), 3);
-	Serial.print(',');
-	Serial.print(TinyGPS::cardinal(gps.f_course()));
-	Serial.print(',');
-	Serial.print(gps.f_speed_mps(), 3);
-	Serial.print(',');
-	Serial.print(gps.satellites());
-	Serial.print(',');
+	float lat, lon;
+	if (gps.f_get_position(&lat, &lon))
+	{
+		Serial.print(lat, 6);
+		Serial.print(',');
+		Serial.print(lon, 6);
+		Serial.print(',');
+		Serial.print(gps.f_altitude(), 3);
+		Serial.print(',');
+		Serial.print(ascentRate, 3);
+		Serial.print(',');
+		Serial.print(gps.f_course(), 3);
+		Serial.print(',');
+		Serial.print(TinyGPS::cardinal(gps.f_course()));
+		Serial.print(',');
+		Serial.print(gps.f_speed_mps(), 3);
+		Serial.print(',');
+		Serial.print(gps.satellites());
+		Serial.print(',');
+	}
+	else
+	{
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+		Serial.print(',');
+	}
 
 	for (uint8_t i=0; i<_countof(therms); ++i)
 	{
