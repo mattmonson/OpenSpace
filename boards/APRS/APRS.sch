@@ -1145,6 +1145,66 @@ End launch SMA connector. The paste layer has been removed so that the connector
 <pad name="EN" x="-2.54" y="3.81" drill="1.016" diameter="1.8796" rot="R90"/>
 <rectangle x1="-2.794" y1="3.556" x2="-2.286" y2="4.064" layer="51"/>
 </package>
+<package name="RADIO-KLP-RECEIVER">
+<wire x1="-20.955" y1="1.27" x2="20.955" y2="1.27" width="0.2032" layer="21"/>
+<wire x1="-21.59" y1="0.635" x2="-21.59" y2="-0.635" width="0.2032" layer="21"/>
+<wire x1="-20.955" y1="1.27" x2="-21.59" y2="0.635" width="0.2032" layer="21"/>
+<wire x1="-21.59" y1="-0.635" x2="-20.955" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="20.955" y1="-1.27" x2="17.78" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="17.78" y1="-1.27" x2="17.78" y2="-5.08" width="0.2032" layer="21"/>
+<wire x1="17.78" y1="-5.08" x2="15.24" y2="-5.08" width="0.2032" layer="21"/>
+<wire x1="15.24" y1="-5.08" x2="15.24" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="15.24" y1="-1.27" x2="5.08" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="5.08" y1="-1.27" x2="5.08" y2="-2.54" width="0.2032" layer="21"/>
+<wire x1="5.08" y1="-2.54" x2="2.54" y2="-2.54" width="0.2032" layer="21"/>
+<wire x1="2.54" y1="-2.54" x2="2.54" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="2.54" y1="-1.27" x2="-1.27" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="-1.27" y1="-1.27" x2="-1.27" y2="-6.35" width="0.2032" layer="21"/>
+<wire x1="-1.27" y1="-6.35" x2="-6.35" y2="-6.35" width="0.2032" layer="21"/>
+<wire x1="-6.35" y1="-6.35" x2="-6.35" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="-6.35" y1="-1.27" x2="-20.955" y2="-1.27" width="0.2032" layer="21"/>
+<pad name="1" x="-20.32" y="0" drill="1.016" diameter="1.8796" shape="square" rot="R90"/>
+<pad name="2" x="-17.78" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<pad name="3" x="-15.24" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<pad name="4" x="-12.7" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<text x="-21.6662" y="1.8288" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-21.59" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-12.954" y1="-0.254" x2="-12.446" y2="0.254" layer="51"/>
+<rectangle x1="-15.494" y1="-0.254" x2="-14.986" y2="0.254" layer="51"/>
+<rectangle x1="-18.034" y1="-0.254" x2="-17.526" y2="0.254" layer="51"/>
+<rectangle x1="-20.574" y1="-0.254" x2="-20.066" y2="0.254" layer="51"/>
+<wire x1="20.955" y1="1.27" x2="21.59" y2="0.635" width="0.2032" layer="21"/>
+<wire x1="21.59" y1="-0.635" x2="20.955" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="21.59" y1="0.635" x2="21.59" y2="-0.635" width="0.2032" layer="21"/>
+<pad name="5" x="12.7" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<pad name="6" x="15.24" y="0" drill="1.016" diameter="1.8796" shape="square" rot="R90"/>
+<pad name="7" x="17.78" y="0" drill="1.016" diameter="1.8796" shape="square" rot="R90"/>
+<pad name="8" x="20.32" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<rectangle x1="20.066" y1="-0.254" x2="20.574" y2="0.254" layer="51"/>
+<rectangle x1="17.526" y1="-0.254" x2="18.034" y2="0.254" layer="51"/>
+<rectangle x1="14.986" y1="-0.254" x2="15.494" y2="0.254" layer="51"/>
+<rectangle x1="12.446" y1="-0.254" x2="12.954" y2="0.254" layer="51"/>
+</package>
+<package name="RADIO-KLP-RECEIVER-NOSILK">
+<pad name="1" x="-20.32" y="0" drill="1.016" diameter="1.8796" shape="square" rot="R90"/>
+<pad name="2" x="-17.78" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<pad name="3" x="-15.24" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<pad name="4" x="-12.7" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<text x="-21.6662" y="1.8288" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-21.59" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-12.954" y1="-0.254" x2="-12.446" y2="0.254" layer="51"/>
+<rectangle x1="-15.494" y1="-0.254" x2="-14.986" y2="0.254" layer="51"/>
+<rectangle x1="-18.034" y1="-0.254" x2="-17.526" y2="0.254" layer="51"/>
+<rectangle x1="-20.574" y1="-0.254" x2="-20.066" y2="0.254" layer="51"/>
+<pad name="5" x="12.7" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<pad name="6" x="15.24" y="0" drill="1.016" diameter="1.8796" shape="square" rot="R90"/>
+<pad name="7" x="17.78" y="0" drill="1.016" diameter="1.8796" shape="square" rot="R90"/>
+<pad name="8" x="20.32" y="0" drill="1.016" diameter="1.8796" rot="R90"/>
+<rectangle x1="20.066" y1="-0.254" x2="20.574" y2="0.254" layer="51"/>
+<rectangle x1="17.526" y1="-0.254" x2="18.034" y2="0.254" layer="51"/>
+<rectangle x1="14.986" y1="-0.254" x2="15.494" y2="0.254" layer="51"/>
+<rectangle x1="12.446" y1="-0.254" x2="12.954" y2="0.254" layer="51"/>
+</package>
 </packages>
 <symbols>
 <symbol name="VENUS_GPS">
@@ -1263,6 +1323,21 @@ End launch SMA connector. The paste layer has been removed so that the connector
 <wire x1="-10.16" y1="-7.62" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
 <text x="-10.16" y="8.128" size="1.778" layer="95">&gt;NAME</text>
 <text x="10.16" y="-8.128" size="1.778" layer="96" rot="R180">&gt;VALUE</text>
+</symbol>
+<symbol name="RADIO-KLP-RECEIVER">
+<pin name="GND0" x="-12.7" y="-10.16" length="middle" rot="R90"/>
+<pin name="DDO" x="-10.16" y="-10.16" length="middle" rot="R90"/>
+<pin name="LDO" x="-7.62" y="-10.16" length="middle" rot="R90"/>
+<pin name="VCC0" x="-5.08" y="-10.16" length="middle" rot="R90"/>
+<pin name="VCC1" x="5.08" y="-10.16" length="middle" rot="R90"/>
+<pin name="GND1" x="7.62" y="-10.16" length="middle" rot="R90"/>
+<pin name="GND2" x="10.16" y="-10.16" length="middle" rot="R90"/>
+<pin name="ANT" x="12.7" y="-10.16" length="middle" rot="R90"/>
+<wire x1="-15.24" y1="-5.08" x2="15.24" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="15.24" y1="-5.08" x2="15.24" y2="5.08" width="0.254" layer="94"/>
+<wire x1="15.24" y1="5.08" x2="-15.24" y2="5.08" width="0.254" layer="94"/>
+<wire x1="-15.24" y1="5.08" x2="-15.24" y2="-5.08" width="0.254" layer="94"/>
+<text x="-15.24" y="5.334" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -1483,6 +1558,43 @@ End launch SMA connector. The paste layer has been removed so that the connector
 <connect gate="G$1" pin="SDA2" pad="5"/>
 <connect gate="G$1" pin="VREF1" pad="2"/>
 <connect gate="G$1" pin="VREF2" pad="7"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="RADIO-KLP-RECEIVER">
+<gates>
+<gate name="G$1" symbol="RADIO-KLP-RECEIVER" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="RADIO-KLP-RECEIVER">
+<connects>
+<connect gate="G$1" pin="ANT" pad="8"/>
+<connect gate="G$1" pin="DDO" pad="2"/>
+<connect gate="G$1" pin="GND0" pad="1"/>
+<connect gate="G$1" pin="GND1" pad="6"/>
+<connect gate="G$1" pin="GND2" pad="7"/>
+<connect gate="G$1" pin="LDO" pad="3"/>
+<connect gate="G$1" pin="VCC0" pad="4"/>
+<connect gate="G$1" pin="VCC1" pad="5"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="-NOSILK" package="RADIO-KLP-RECEIVER-NOSILK">
+<connects>
+<connect gate="G$1" pin="ANT" pad="8"/>
+<connect gate="G$1" pin="DDO" pad="2"/>
+<connect gate="G$1" pin="GND0" pad="1"/>
+<connect gate="G$1" pin="GND1" pad="6"/>
+<connect gate="G$1" pin="GND2" pad="7"/>
+<connect gate="G$1" pin="LDO" pad="3"/>
+<connect gate="G$1" pin="VCC0" pad="4"/>
+<connect gate="G$1" pin="VCC1" pad="5"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -3322,6 +3434,9 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <part name="I2C_0" library="SparkFun-Connectors" deviceset="M04" device="PTH"/>
 <part name="P+9" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
 <part name="GND13" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="JONAH_RECEIVER" library="OpenSpace" deviceset="RADIO-KLP-RECEIVER" device="-NOSILK"/>
+<part name="GND14" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="U$11" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3333,11 +3448,11 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <instance part="R_T1" gate="G$1" x="271.78" y="99.06" rot="R270"/>
 <instance part="LED1" gate="G$1" x="78.74" y="15.24" rot="R90"/>
 <instance part="R1" gate="G$1" x="91.44" y="15.24"/>
-<instance part="U$1" gate="G$1" x="71.12" y="91.44"/>
-<instance part="P+1" gate="G$1" x="71.12" y="71.12"/>
-<instance part="GND1" gate="1" x="17.78" y="50.8"/>
-<instance part="GND2" gate="1" x="76.2" y="50.8"/>
-<instance part="U$2" gate="G$1" x="22.86" y="96.52"/>
+<instance part="U$1" gate="G$1" x="86.36" y="127"/>
+<instance part="P+1" gate="G$1" x="86.36" y="106.68"/>
+<instance part="GND1" gate="1" x="33.02" y="86.36"/>
+<instance part="GND2" gate="1" x="91.44" y="86.36"/>
+<instance part="U$2" gate="G$1" x="38.1" y="132.08"/>
 <instance part="GPS0" gate="G$1" x="190.5" y="101.6"/>
 <instance part="GND3" gate="1" x="99.06" y="10.16"/>
 <instance part="GND4" gate="1" x="170.18" y="86.36"/>
@@ -3363,8 +3478,8 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <instance part="GND12" gate="1" x="157.48" y="86.36"/>
 <instance part="U$10" gate="G$1" x="121.92" y="119.38"/>
 <instance part="P+3" gate="G$1" x="157.48" y="119.38"/>
-<instance part="POWER5" gate="POWER" x="48.26" y="83.82"/>
-<instance part="POWER3" gate="POWER" x="48.26" y="63.5"/>
+<instance part="POWER5" gate="POWER" x="63.5" y="119.38"/>
+<instance part="POWER3" gate="POWER" x="63.5" y="99.06"/>
 <instance part="THERM0" gate="G$1" x="246.38" y="116.84" rot="R270"/>
 <instance part="I2C_TRANS" gate="G$1" x="215.9" y="33.02" rot="MR0"/>
 <instance part="GND9" gate="1" x="233.68" y="5.08"/>
@@ -3377,6 +3492,9 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <instance part="I2C_0" gate="G$1" x="287.02" y="30.48"/>
 <instance part="P+9" gate="G$1" x="302.26" y="53.34"/>
 <instance part="GND13" gate="1" x="302.26" y="10.16"/>
+<instance part="JONAH_RECEIVER" gate="G$1" x="45.72" y="71.12"/>
+<instance part="GND14" gate="1" x="27.94" y="50.8"/>
+<instance part="U$11" gate="G$1" x="68.58" y="76.2"/>
 </instances>
 <busses>
 </busses>
@@ -3424,21 +3542,21 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <pinref part="GND6" gate="1" pin="GND"/>
 </segment>
 <segment>
-<wire x1="30.48" y1="78.74" x2="17.78" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="17.78" y1="78.74" x2="17.78" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="17.78" y1="58.42" x2="17.78" y2="53.34" width="0.1524" layer="91"/>
-<wire x1="30.48" y1="58.42" x2="17.78" y2="58.42" width="0.1524" layer="91"/>
-<junction x="17.78" y="58.42"/>
+<wire x1="45.72" y1="114.3" x2="33.02" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="114.3" x2="33.02" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="93.98" x2="33.02" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="93.98" x2="33.02" y2="93.98" width="0.1524" layer="91"/>
+<junction x="33.02" y="93.98"/>
 <pinref part="GND1" gate="1" pin="GND"/>
 <pinref part="POWER5" gate="POWER" pin="BATT-"/>
 <pinref part="POWER3" gate="POWER" pin="BATT-"/>
 </segment>
 <segment>
-<wire x1="66.04" y1="81.28" x2="76.2" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="76.2" y1="81.28" x2="76.2" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="76.2" y1="60.96" x2="76.2" y2="53.34" width="0.1524" layer="91"/>
-<wire x1="66.04" y1="60.96" x2="76.2" y2="60.96" width="0.1524" layer="91"/>
-<junction x="76.2" y="60.96"/>
+<wire x1="81.28" y1="116.84" x2="91.44" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="116.84" x2="91.44" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="96.52" x2="91.44" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="96.52" x2="91.44" y2="96.52" width="0.1524" layer="91"/>
+<junction x="91.44" y="96.52"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 <pinref part="POWER5" gate="POWER" pin="VCC-"/>
 <pinref part="POWER3" gate="POWER" pin="VCC-"/>
@@ -3503,6 +3621,21 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <wire x1="292.1" y1="27.94" x2="302.26" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="302.26" y1="27.94" x2="302.26" y2="12.7" width="0.1524" layer="91"/>
 <pinref part="GND13" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="JONAH_RECEIVER" gate="G$1" pin="GND2"/>
+<wire x1="55.88" y1="60.96" x2="55.88" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="55.88" y1="58.42" x2="53.34" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="58.42" x2="33.02" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="58.42" x2="27.94" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="58.42" x2="27.94" y2="53.34" width="0.1524" layer="91"/>
+<pinref part="JONAH_RECEIVER" gate="G$1" pin="GND1"/>
+<wire x1="53.34" y1="60.96" x2="53.34" y2="58.42" width="0.1524" layer="91"/>
+<junction x="53.34" y="58.42"/>
+<pinref part="JONAH_RECEIVER" gate="G$1" pin="GND0"/>
+<wire x1="33.02" y1="60.96" x2="33.02" y2="58.42" width="0.1524" layer="91"/>
+<junction x="33.02" y="58.42"/>
+<pinref part="GND14" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="RX" class="0">
@@ -3585,8 +3718,8 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <pinref part="THERM2" gate="G$1" pin="2"/>
 </segment>
 <segment>
-<wire x1="66.04" y1="86.36" x2="71.12" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="86.36" x2="71.12" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="121.92" x2="86.36" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="121.92" x2="86.36" y2="127" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="G$1" pin="5V"/>
 <pinref part="POWER5" gate="POWER" pin="VCC+"/>
 </segment>
@@ -3626,6 +3759,17 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <wire x1="200.66" y1="35.56" x2="198.12" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="35.56" x2="198.12" y2="58.42" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="JONAH_RECEIVER" gate="G$1" pin="VCC0"/>
+<wire x1="40.64" y1="60.96" x2="40.64" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="55.88" x2="50.8" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="55.88" x2="68.58" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="55.88" x2="68.58" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="JONAH_RECEIVER" gate="G$1" pin="VCC1"/>
+<wire x1="50.8" y1="60.96" x2="50.8" y2="55.88" width="0.1524" layer="91"/>
+<junction x="50.8" y="55.88"/>
+<pinref part="U$11" gate="G$1" pin="5V"/>
+</segment>
 </net>
 <net name="N$11" class="0">
 <segment>
@@ -3636,8 +3780,8 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 </net>
 <net name="3.3V" class="0">
 <segment>
-<wire x1="66.04" y1="66.04" x2="71.12" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="66.04" x2="71.12" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="101.6" x2="86.36" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="101.6" x2="86.36" y2="106.68" width="0.1524" layer="91"/>
 <pinref part="P+1" gate="G$1" pin="3.3V"/>
 <pinref part="POWER3" gate="POWER" pin="VCC+"/>
 </segment>
@@ -3678,11 +3822,11 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 </net>
 <net name="1.8V" class="0">
 <segment>
-<wire x1="30.48" y1="63.5" x2="22.86" y2="63.5" width="0.1524" layer="91"/>
-<wire x1="30.48" y1="83.82" x2="22.86" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="83.82" x2="22.86" y2="96.52" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="63.5" x2="22.86" y2="83.82" width="0.1524" layer="91"/>
-<junction x="22.86" y="83.82"/>
+<wire x1="45.72" y1="99.06" x2="38.1" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="119.38" x2="38.1" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="119.38" x2="38.1" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="99.06" x2="38.1" y2="119.38" width="0.1524" layer="91"/>
+<junction x="38.1" y="119.38"/>
 <pinref part="U$2" gate="G$1" pin="1.8V"/>
 <pinref part="POWER5" gate="POWER" pin="BATT+"/>
 <pinref part="POWER3" gate="POWER" pin="BATT+"/>
@@ -3720,8 +3864,8 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <net name="3.3V_EN" class="0">
 <segment>
 <pinref part="POWER3" gate="POWER" pin="EN"/>
-<wire x1="30.48" y1="68.58" x2="15.24" y2="68.58" width="0.1524" layer="91"/>
-<label x="15.24" y="68.58" size="1.778" layer="95" rot="MR0"/>
+<wire x1="45.72" y1="104.14" x2="30.48" y2="104.14" width="0.1524" layer="91"/>
+<label x="30.48" y="104.14" size="1.778" layer="95" rot="MR0"/>
 </segment>
 <segment>
 <pinref part="ARDUINO" gate="G$1" pin="D10*"/>
@@ -3784,6 +3928,18 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <pinref part="I2C_0" gate="G$1" pin="3"/>
 <wire x1="294.64" y1="33.02" x2="292.1" y2="33.02" width="0.1524" layer="91"/>
 <label x="294.64" y="33.02" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="JONAH_RX" class="0">
+<segment>
+<pinref part="ARDUINO" gate="G$1" pin="D11*"/>
+<wire x1="132.08" y1="22.86" x2="121.92" y2="22.86" width="0.1524" layer="91"/>
+<label x="121.92" y="22.86" size="1.778" layer="95" rot="MR0"/>
+</segment>
+<segment>
+<pinref part="JONAH_RECEIVER" gate="G$1" pin="DDO"/>
+<wire x1="35.56" y1="60.96" x2="35.56" y2="50.8" width="0.1524" layer="91"/>
+<label x="35.56" y="50.8" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
