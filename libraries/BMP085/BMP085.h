@@ -16,9 +16,9 @@ public:
 	int32_t GetReferencePressureInPa() const;
 
 	int32_t GetTempInDeciC() const;  // in deci-degrees-C
-	float GetTempInC() const;      // in degrees C
+	float GetTempInC() const;        // in degrees C
 	int32_t GetPressureInPa() const; // Pa
-	float GetAltitudeInM() const;  // meters
+	float GetAltitudeInM() const;    // meters
 
 private:
 	void RequestTemp();
