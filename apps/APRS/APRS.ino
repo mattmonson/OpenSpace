@@ -2,11 +2,13 @@
 #include <Thermistor.h>
 #include <FPS.h>
 #include <TinyGPS.h>
+#include "Jonah.h"
 #include <AX25.h>
 #include <Sinewave.h>
 #include <TimerOne.h>
 
 #include <Wire.h>
+#include <SoftwareSerial.h>
 
 #define LoggingInterval 1000ul
 uint32_t loggingLastSend = 0;
@@ -23,6 +25,9 @@ Thermistor therms[2] = ThermistorPins;
 float thermTempsFiltered[_countof(therms)];
 
 TinyGPS gps;
+
+SoftwareSerial JonahSerial(11, 9);
+JonahRX jonahRX;
 
 // data for tracking the ascent rate
 const uint32_t c_AscentRateInterval = 15000ul;
@@ -49,6 +54,7 @@ const uint32_t TransmitPeriod = 81000ul;
 uint32_t lastTransmit = 0;
 
 
+void onJonahReceive(const uint8_t* data, size_t size);
 void transmitLoggingHeadings();
 void transmitLogging(uint32_t now);
 void transmitAPRS(uint32_t now);
@@ -59,6 +65,7 @@ void setup()
 	digitalWrite(13, HIGH);
 
 	Serial.begin(115200);
+	JonahSerial.begin(4800);
 
 	delay(3000);
 
@@ -105,6 +112,10 @@ void loop()
 	while (Serial.available())
 		gps.encode((char)Serial.read());
 
+	while (JonahSerial.available())
+		if (jonahRX.onReceive(JonahSerial.read()))
+			onJonahReceive(jonahRX.getData(), jonahRX.getDataSize());
+
 	// ascent rate
 	if (gps.get_position(NULL, NULL))
 	{
@@ -129,6 +140,37 @@ void loop()
 		transmitAPRS(now);
 	
 	fps.loop();
+}
+
+void onJonahReceive(const uint8_t* data, size_t size)
+{
+	struct Packet
+	{
+		uint32_t now;
+		uint16_t batteryVoltage; // in centi-Volts
+		int16_t thermTemp;       // in deci-C
+		int16_t bmpTemp;         // in deci-C
+		uint32_t bmpPressure;    // in Pa
+	};
+
+	if (size != sizeof(Packet))
+	{
+		Serial.print("Unexpected size for Jonah packet: ");
+		Serial.println(size);
+		return;
+	}
+
+	const Packet* p = reinterpret_cast<const Packet*>(data);
+	Serial.print(p->now);
+	Serial.print(',');
+	Serial.print(p->batteryVoltage);
+	Serial.print(',');
+	Serial.print(p->thermTemp);
+	Serial.print(',');
+	Serial.print(p->bmpTemp);
+	Serial.print(',');
+	Serial.print(p->bmpPressure);
+	Serial.println();
 }
 
 void transmitLoggingHeadings()

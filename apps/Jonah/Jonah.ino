@@ -116,4 +116,6 @@ void transmit(uint32_t now)
 		Serial.write(byte);
 		checksum ^= byte;
 	}
+
+	Serial.write(checksum);
 }
