@@ -2704,7 +2704,7 @@ Standard 4-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 </classes>
 <parts>
 <part name="BMP085" library="SparkFun" deviceset="M06" device="SIP"/>
-<part name="ARDUINO" library="OpenSpace" deviceset="ARDUINO_PRO_MINI" device=""/>
+<part name="ARDUINO" library="OpenSpace" deviceset="ARDUINO_PRO_MINI" device="-NOSILK"/>
 <part name="P+1" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
 <part name="P+2" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
 <part name="U$6" library="SparkFun-Aesthetics" deviceset="V_BATT" device=""/>
