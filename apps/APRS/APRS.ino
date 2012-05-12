@@ -42,7 +42,7 @@ AX25Packet packet;
 Sinewave sinewave(&OCR2B, 256, 0xFF);
 uint32_t msgNum = 0;
 
-const AX25Address c_SrcAddress = {"KF7OCC", 11};
+const AX25Address c_SrcAddress = {"KF7OCC", 0};
 const AX25Address c_FullPath[] = {
 	{"WIDE1", 1},
 	{"WIDE2", 1},
@@ -51,7 +51,7 @@ const uint8_t c_FullPathCount = sizeof(c_FullPath) / sizeof(c_FullPath[0]);
 
 const float c_HighAltitudeCutoff = 1500.0f;
 
-const uint32_t TransmitPeriod = 10000ul;
+const uint32_t TransmitPeriod = 60000ul;
 uint32_t lastTransmit = 0;
 
 
@@ -137,7 +137,7 @@ void loop()
 	// time to transmit?
 	if (now - loggingLastSend >= LoggingInterval)
 		transmitLogging(now);
-	if (now - lastTransmit >= TransmitPeriod)// && gps.get_position(NULL, NULL) && gps.get_datetime(NULL, NULL))
+	if (now - lastTransmit >= TransmitPeriod && gps.get_position(NULL, NULL) && gps.get_datetime(NULL, NULL))
 		transmitAPRS(now);
 	
 	fps.loop();
@@ -308,7 +308,7 @@ void transmitAPRS(uint32_t now)
 			msgNum
 		);
 #else
-		sprintf(msg, ";MYBALLOON*%.2hu%.2hu%.2huh%.2d%.2ld.%.2ld%c/%.3d%.2ld.%.2ld%c>%.3ld/%.3ld/A=%.6ld/Ti=%ld/Te=%ld/V=%ld.%.2ld/#%lu", 
+		sprintf(msg, ";CXXISAT00*%.2hu%.2hu%.2huh%.2d%.2ld.%.2ld%c/%.3d%.2ld.%.2ld%c>%.3ld/%.3ld/A=%.6ld/Ti=%ld/Te=%ld/V=%ld.%.2ld/#%lu", 
 			hours,
 			minutes,
 			seconds,
