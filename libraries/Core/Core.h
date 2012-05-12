@@ -14,7 +14,7 @@ float sign(float x);
 float LerpClamp(float in, float in0, float in1, float out0, float out1);
 float LerpClamp(float in, float in0, float in1, float in2, float out0, float out1, float out2);
 float ModInto(float in, float min, float max);
-uintptr_t GetFreeMemory();
+size_t GetFreeMemory();
 
 template <typename T>
 T ToRadians(const T& degrees)

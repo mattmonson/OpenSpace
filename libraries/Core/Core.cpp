@@ -48,14 +48,14 @@ extern unsigned int __bss_end;
 extern unsigned int __heap_start;
 extern void *__brkval;
 
-uintptr_t GetFreeMemory()
+size_t GetFreeMemory()
 {
-	uintptr_t free_memory;
+	size_t free_memory;
 
 	if (__brkval == 0)
-		free_memory = ((uintptr_t)&free_memory) - ((uintptr_t)&__bss_end);
+		free_memory = ((size_t)&free_memory) - ((size_t)&__bss_end);
 	else
-		free_memory = ((uintptr_t)&free_memory) - ((uintptr_t)__brkval);
+		free_memory = ((size_t)&free_memory) - ((size_t)__brkval);
 
 	return free_memory;
 }
