@@ -2,6 +2,7 @@
 #include <Thermistor.h>
 #include <FPS.h>
 #include <TinyGPS.h>
+#include <Flash.h>
 #include "Jonah.h"
 #include <AX25.h>
 #include <Sinewave.h>
@@ -20,8 +21,8 @@ FPS fps(0);
 float batteryVoltage = 0.0f;
 float batteryVoltageSmooth = 0.0f;
 
-#define ThermistorPins {A1, A2}
-Thermistor therms[2] = ThermistorPins;
+#define ThermistorPins {A0, A1, A2}
+Thermistor therms[] = ThermistorPins;
 float thermTempsFiltered[_countof(therms)];
 
 TinyGPS gps;
@@ -35,7 +36,7 @@ uint32_t ascentRateTime = 0;
 float ascentRateAlt = 0.0f;
 float ascentRate = 0.0f;
 
-#define APRSPTTPin 2
+#define APRSPTTPin 4
 #define APRSTXPin 3
 AX25Packet packet;
 Sinewave sinewave(&OCR2B, 256, 0xFF);
@@ -50,7 +51,7 @@ const uint8_t c_FullPathCount = sizeof(c_FullPath) / sizeof(c_FullPath[0]);
 
 const float c_HighAltitudeCutoff = 1500.0f;
 
-const uint32_t TransmitPeriod = 81000ul;
+const uint32_t TransmitPeriod = 10000ul;
 uint32_t lastTransmit = 0;
 
 
@@ -136,7 +137,7 @@ void loop()
 	// time to transmit?
 	if (now - loggingLastSend >= LoggingInterval)
 		transmitLogging(now);
-	if (now - lastTransmit >= TransmitPeriod && gps.get_position(NULL, NULL) && gps.get_datetime(NULL, NULL))
+	if (now - lastTransmit >= TransmitPeriod)// && gps.get_position(NULL, NULL) && gps.get_datetime(NULL, NULL))
 		transmitAPRS(now);
 	
 	fps.loop();
@@ -155,8 +156,8 @@ void onJonahReceive(const uint8_t* data, size_t size)
 
 	if (size != sizeof(Packet))
 	{
-		Serial.print("Unexpected size for Jonah packet: ");
-		Serial.println(size);
+		//Serial.print("Unexpected size for Jonah packet: ");
+		//Serial.println(size);
 		return;
 	}
 
@@ -175,21 +176,25 @@ void onJonahReceive(const uint8_t* data, size_t size)
 
 void transmitLoggingHeadings()
 {
-	Serial.print("now (ms),");
-	Serial.print("battery (V),");
+	Serial << F("now (ms),");
+	Serial << F("battery (V),");
 
-	Serial.print("gpsTime,");
-	Serial.print("gpsLat (deg),");
-	Serial.print("gpsLon (deg),");
-	Serial.print("gpsAlt (m),");
-	Serial.print("gpsAscentRate (m/s),");
-	Serial.print("gpsCourse (deg),");
-	Serial.print("gpsCourse (cardinal),");
-	Serial.print("gpsSpeed (m/s),");
-	Serial.print("gpsSats,");
+	Serial << F("gpsTime,");
+	Serial << F("gpsLat (deg),");
+	Serial << F("gpsLon (deg),");
+	Serial << F("gpsAlt (m),");
+	Serial << F("gpsAscentRate (m/s),");
+	Serial << F("gpsCourse (deg),");
+	Serial << F("gpsCourse (cardinal),");
+	Serial << F("gpsSpeed (m/s),");
+	Serial << F("gpsSats,");
 	
 	for (uint8_t i=0; i<_countof(therms); ++i)
-		serprintf(Serial, "thermistor%hu (deg C),", i);
+	{
+		Serial << F("thermistor");
+		Serial.print(i);
+		Serial << F(" (deg C),");
+	}
 	
 	Serial.println();
 }
@@ -261,20 +266,27 @@ void transmitAPRS(uint32_t now)
 	lastTransmit = now;
 	++msgNum;
 
-	uint8_t hours, minutes, seconds;
-	float lat, lon;
-
-	gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, NULL, NULL);
-	gps.f_get_position(&lat, &lon, NULL);
-	float course = gps.f_course();
-	float speed = gps.f_speed_mps();
-	float alt = gps.f_altitude();
-
 	AX25Address dest = {"APRS", 0};
-	char msg[256];
+	uint8_t pathCount = c_FullPathCount;
 
-	if (true)
+	char msg[128];
+
 	{
+		uint8_t hours, minutes, seconds;
+		float lat, lon;
+
+		gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, NULL, NULL);
+		gps.f_get_position(&lat, &lon, NULL);
+		float course = gps.f_course();
+		float speed = gps.f_speed_mps();
+		float alt = gps.f_altitude();
+
+		if (alt >= c_HighAltitudeCutoff)
+		{
+			pathCount = 0;
+		}
+
+#if 0
 		char miceInfo[32];
 		packet.MicECompress(&dest, miceInfo, 
 			lat,
@@ -295,9 +307,7 @@ void transmitAPRS(uint32_t now)
 			(int32_t)(ascentRate * 10),
 			msgNum
 		);
-	}
-	else
-	{
+#else
 		sprintf(msg, ";MYBALLOON*%.2hu%.2hu%.2huh%.2d%.2ld.%.2ld%c/%.3d%.2ld.%.2ld%c>%.3ld/%.3ld/A=%.6ld/Ti=%ld/Te=%ld/V=%ld.%.2ld/#%lu", 
 			hours,
 			minutes,
@@ -319,28 +329,36 @@ void transmitAPRS(uint32_t now)
 			(int32_t)fabs(batteryVoltageSmooth * 100) % 100,
 			msgNum
 		);
+#endif
+
 	}
 
-	const uint8_t pathCount = alt >= c_HighAltitudeCutoff ? 0 : c_FullPathCount;
-
 #if 1
-	serprintf(Serial, "%lu,%s-%d",
-		now,
-		c_SrcAddress.m_CallSign,
-		(int)c_SrcAddress.m_SSID
-	);
+	Serial.print(now);
+	Serial.print(',');
+	Serial.print(c_SrcAddress.m_CallSign);
+	Serial.print('-');
+	Serial.print((int)c_SrcAddress.m_SSID);
 
 	for (int i=0; i<pathCount; ++i)
-		serprintf(Serial, "/%s-%d", c_FullPath[i].m_CallSign, (int)c_FullPath[i].m_SSID);
+	{
+		Serial.print('/');
+		Serial.print(c_FullPath[i].m_CallSign);
+		Serial.print('-');
+		Serial.print((int)c_FullPath[i].m_SSID);
+	}
 
-	serprintf(Serial, ">%s-%d:%s\n",
-		dest.m_CallSign,
-		(int)dest.m_SSID,
-		msg
-	);
+	Serial.print('>');
+	Serial.print(dest.m_CallSign);
+	Serial.print('-');
+	Serial.print((int)dest.m_SSID);
+	Serial.print(msg);
+	Serial.println();
 #endif
 
 	packet.build(c_SrcAddress, dest, c_FullPath, pathCount, msg);
 	packet.transmit(&sinewave);
+
+	//Serial.println(GetFreeMemory());
 }
 

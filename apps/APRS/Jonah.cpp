@@ -39,7 +39,7 @@ bool JonahRX::onReceive(uint8_t byte)
 
 		if (m_Checksum != 0)
 		{
-			printf("Failed checksum test on packet with size %hu\n", m_Size);
+			//printf("Failed checksum test on packet with size %hu\n", m_Size);
 		}
 
 		return m_Checksum == 0; // if the checksum is 0, then it's a valid packet
