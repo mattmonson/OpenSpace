@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Core.h>
-//#include <AX25.h>
 #include <XTendAPI.h>
 
 const uint32_t TargetFrameTime           = 0ul;
@@ -46,10 +45,8 @@ struct ETMPs
 
 
 
-//#define XTendSerial Serial3
 #define XTendSerialTXPin 5
 #define XTendSerialRXPin 4
 #define XTendBaud 9600
-//#define XTendPTTPin 13
 const XTendAPI::Address XTendDest = 0x5854;
 
