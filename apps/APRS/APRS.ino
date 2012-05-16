@@ -308,7 +308,7 @@ void transmitAPRS(uint32_t now)
 			msgNum
 		);
 #else
-		sprintf(msg, ";CXXISAT00*%.2hu%.2hu%.2huh%.2d%.2ld.%.2ld%c/%.3d%.2ld.%.2ld%c>%.3ld/%.3ld/A=%.6ld/Ti=%ld/Te=%ld/V=%ld.%.2ld/#%lu", 
+		sprintf(msg, ";CXXISAT00*%.2hu%.2hu%.2huh%.2d%.2ld.%.2ld%c%c%.3d%.2ld.%.2ld%c%c%.3ld/%.3ld/A=%.6ld/Ti=%ld/Te=%ld/V=%ld.%.2ld/#%lu", 
 			hours,
 			minutes,
 			seconds,
@@ -316,10 +316,12 @@ void transmitAPRS(uint32_t now)
 			(int32_t)fabs(lat * 60) % 60,
 			(int32_t)fabs(lat * 60 * 100) % 100,
 			lat > 0 ? 'N' : 'S',
+			'/',
 			(int16_t)fabs(lon),
 			(int32_t)fabs(lon * 60) % 60,
 			(int32_t)fabs(lon * 60 * 100) % 100,
 			lon > 0 ? 'E' : 'W',
+			'O',
 			(int32_t)course,
 			(int32_t)METERS_PER_SECOND_TO_KNOTS(speed),
 			(int32_t)METERS_TO_FEET(max(alt, 0.0f)),
