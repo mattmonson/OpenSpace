@@ -167,20 +167,20 @@ int32_t BMP085::GetRawPressure()
 
 void BMP085::ProcessRawReadings()
 {
-	int32_t x1 = ((m_UT - m_AC6) * m_AC5) >> 15;
+	int32_t x1 = ((m_UT - (int32_t)m_AC6) * (int32_t)m_AC5) >> 15;
 	int32_t x2 = ((int32_t)m_MC << 11) / (x1 + m_MD);
 	int32_t b5 = x1 + x2;
 	m_TempInDeciC = (b5 + 8) >> 4;
 
 	int32_t b6 = b5 - 4000;
-	x1 = (m_B2 * (b6 * b6 >> 12)) >> 11;
-	x2 = m_AC2 * b6 >> 11;
+	x1 = (m_B2 * ((b6 * b6) >> 12)) >> 11;
+	x2 = (m_AC2 * b6) >> 11;
 	int32_t x3 = x1 + x2;
-	int32_t b3 = (((m_AC1 * 4 + x3) << m_OSS) + 2) >> 2;
-	x1 = m_AC3 * b6 >> 13;
-	x2 = (m_B1 * (b6 * b6 >> 12)) >> 16;
+	int32_t b3 = ((((int32_t)m_AC1 * 4 + x3) << m_OSS) + 2) >> 2;
+	x1 = (m_AC3 * b6) >> 13;
+	x2 = (m_B1 * ((b6 * b6) >> 12)) >> 16;
 	x3 = ((x1 + x2) + 2) >> 2;
-	uint32_t b4 = m_AC4 * (uint32_t)(x3 + 32768) >> 15;
+	uint32_t b4 = (m_AC4 * (uint32_t)(x3 + 32768)) >> 15;
 	uint32_t b7 = ((uint32_t)m_UP - b3) * (50000 >> m_OSS);
 	int32_t p = (b7 < 0x80000000 ? b7 * 2 / b4 : b7 / b4 * 2);
 	x1 = (p >> 8) * (p >> 8);
