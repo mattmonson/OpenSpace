@@ -2,6 +2,7 @@
 #include <Thermistor.h>
 #include <FPS.h>
 #include <TinyGPS.h>
+#include <BMP085.h>
 #include <Flash.h>
 #include "Jonah.h"
 #include <AX25.h>
@@ -26,6 +27,10 @@ Thermistor therms[] = ThermistorPins;
 float thermTempsFiltered[_countof(therms)];
 
 TinyGPS gps;
+
+#define I2CEnablePin 12
+BMP085 pressure;
+float pressureFiltered;
 
 SoftwareSerial JonahSerial(11, 9);
 JonahRX jonahRX;
@@ -68,7 +73,11 @@ void setup()
 	Serial.begin(115200);
 	JonahSerial.begin(4800);
 
-	delay(3000);
+	pinMode(I2CEnablePin, OUTPUT);
+	digitalWrite(I2CEnablePin, HIGH);
+	Wire.begin();
+
+	delay(1000);
 
 	pinMode(BatteryMonitorPin, INPUT);
 	batteryVoltage = analogRead(BatteryMonitorPin) / 1023.0f * 5.0f;
@@ -76,6 +85,12 @@ void setup()
 
 	for (uint8_t i=0; i<_countof(therms); ++i)
 		thermTempsFiltered[i] = therms[i].getTemp();
+
+	pressure.setup();
+	pressure.SetOversamplingSetting(3);
+	pressure.SetReferencePressure(101325);
+	pressure.loop();
+	pressureFiltered = pressure.GetPressureInPa();
 
 	packet.setPTTPin(APRSPTTPin);
 	pinMode(APRSTXPin, OUTPUT);
@@ -112,6 +127,9 @@ void loop()
 
 	while (Serial.available())
 		gps.encode((char)Serial.read());
+
+	pressure.loopAsync();
+	pressureFiltered = LowPassFilter((float)pressure.GetPressureInPa(), pressureFiltered, dt, 2.5f);
 
 	while (JonahSerial.available())
 		if (jonahRX.onReceive(JonahSerial.read()))
@@ -195,6 +213,9 @@ void transmitLoggingHeadings()
 		Serial.print(i);
 		Serial << F(" (deg C),");
 	}
+
+	Serial << F("bmpTemp (deg C),");
+	Serial << F("bmpPressure (Pa),");
 	
 	Serial.println();
 }
@@ -257,6 +278,11 @@ void transmitLogging(uint32_t now)
 		Serial.print(thermTempsFiltered[i], 2);
 		Serial.print(',');
 	}
+
+	Serial.print(pressure.GetTempInC(), 1);
+	Serial.print(',');
+	Serial.print(pressureFiltered, 0);
+	Serial.print(',');
 	
 	Serial.println();
 }
