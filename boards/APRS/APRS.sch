@@ -3428,8 +3428,8 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <part name="P+4" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
 <part name="P+5" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
 <part name="P+6" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
-<part name="SCL_PU" library="SparkFun-Passives" deviceset="RESISTOR" device="0805-RES" value="3.3k"/>
 <part name="SDA_PU" library="SparkFun-Passives" deviceset="RESISTOR" device="0805-RES" value="3.3k"/>
+<part name="SCL_PU" library="SparkFun-Passives" deviceset="RESISTOR" device="0805-RES" value="3.3k"/>
 <part name="U$9" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="I2C_0" library="SparkFun-Connectors" deviceset="M04" device="PTH"/>
 <part name="P+9" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
@@ -3486,8 +3486,8 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <instance part="P+4" gate="G$1" x="236.22" y="58.42"/>
 <instance part="P+5" gate="G$1" x="243.84" y="58.42"/>
 <instance part="P+6" gate="G$1" x="251.46" y="58.42"/>
-<instance part="SCL_PU" gate="G$1" x="243.84" y="48.26" rot="R90"/>
-<instance part="SDA_PU" gate="G$1" x="251.46" y="48.26" rot="R90"/>
+<instance part="SDA_PU" gate="G$1" x="243.84" y="48.26" rot="R90"/>
+<instance part="SCL_PU" gate="G$1" x="251.46" y="48.26" rot="R90"/>
 <instance part="U$9" gate="G$1" x="198.12" y="58.42"/>
 <instance part="I2C_0" gate="G$1" x="287.02" y="30.48"/>
 <instance part="P+9" gate="G$1" x="302.26" y="53.34"/>
@@ -3805,12 +3805,12 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 </segment>
 <segment>
 <pinref part="P+5" gate="G$1" pin="3.3V"/>
-<pinref part="SCL_PU" gate="G$1" pin="2"/>
+<pinref part="SDA_PU" gate="G$1" pin="2"/>
 <wire x1="243.84" y1="58.42" x2="243.84" y2="53.34" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="P+6" gate="G$1" pin="3.3V"/>
-<pinref part="SDA_PU" gate="G$1" pin="2"/>
+<pinref part="SCL_PU" gate="G$1" pin="2"/>
 <wire x1="251.46" y1="58.42" x2="251.46" y2="53.34" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -3903,7 +3903,7 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <pinref part="I2C_TRANS" gate="G$1" pin="SCL1"/>
 <wire x1="231.14" y1="30.48" x2="251.46" y2="30.48" width="0.1524" layer="91"/>
 <label x="259.08" y="30.48" size="1.778" layer="95"/>
-<pinref part="SDA_PU" gate="G$1" pin="1"/>
+<pinref part="SCL_PU" gate="G$1" pin="1"/>
 <wire x1="251.46" y1="30.48" x2="259.08" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="251.46" y1="43.18" x2="251.46" y2="30.48" width="0.1524" layer="91"/>
 <junction x="251.46" y="30.48"/>
@@ -3919,7 +3919,7 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <pinref part="I2C_TRANS" gate="G$1" pin="SDA1"/>
 <wire x1="231.14" y1="27.94" x2="243.84" y2="27.94" width="0.1524" layer="91"/>
 <label x="259.08" y="27.94" size="1.778" layer="95"/>
-<pinref part="SCL_PU" gate="G$1" pin="1"/>
+<pinref part="SDA_PU" gate="G$1" pin="1"/>
 <wire x1="243.84" y1="27.94" x2="259.08" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="243.84" y1="43.18" x2="243.84" y2="27.94" width="0.1524" layer="91"/>
 <junction x="243.84" y="27.94"/>
