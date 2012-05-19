@@ -84,7 +84,7 @@ void setup()
 	batteryVoltageSmooth = batteryVoltage;
 
 	for (uint8_t i=0; i<_countof(therms); ++i)
-		thermTempsFiltered[i] = therms[i].getTemp();
+		thermTempsFiltered[i] = Clamp(therms[i].getTemp(), -99.0, 99.0);
 
 	pressure.setup();
 	pressure.SetOversamplingSetting(3);
@@ -123,7 +123,7 @@ void loop()
 	batteryVoltageSmooth = LowPassFilter(batteryVoltage, batteryVoltageSmooth, dt, 2.5f);
 
 	for (uint8_t i=0; i<_countof(therms); ++i)
-		thermTempsFiltered[i] = LowPassFilter((float)therms[i].getTemp(), thermTempsFiltered[i], dt, 2.5f);
+		thermTempsFiltered[i] = LowPassFilter((float)Clamp(therms[i].getTemp(), -99.0, 99.0), thermTempsFiltered[i], dt, 2.5f);
 
 	while (Serial.available())
 		gps.encode((char)Serial.read());
@@ -300,12 +300,24 @@ void transmitAPRS(uint32_t now)
 	{
 		uint8_t hours, minutes, seconds;
 		float lat, lon;
+		float course, speed, alt;
 
-		gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, NULL, NULL);
-		gps.f_get_position(&lat, &lon, NULL);
-		float course = gps.f_course();
-		float speed = gps.f_speed_mps();
-		float alt = gps.f_altitude();
+		if (!gps.crack_datetime(NULL, NULL, NULL, &hours, &minutes, &seconds, NULL, NULL))
+		{
+			hours = minutes = seconds = 0;
+		}
+
+		if (gps.f_get_position(&lat, &lon, NULL))
+		{
+			course = gps.f_course();
+			speed = gps.f_speed_mps();
+			alt = gps.f_altitude();
+		}
+		else
+		{
+			lat = lon = 0;
+			course = speed = alt = 0;
+		}
 
 		if (alt >= c_HighAltitudeCutoff)
 		{
@@ -334,22 +346,25 @@ void transmitAPRS(uint32_t now)
 			msgNum
 		);
 #else
-		sprintf(msg, ";CXXISAT00*%.2hu%.2hu%.2huh%.2d%.2ld.%.2ld%c%c%.3d%.2ld.%.2ld%c%c%.3ld/%.3ld/A=%.6ld/Ti=%ld/Te=%ld/V=%ld.%.2ld/#%lu", 
-			hours,
-			minutes,
-			seconds,
-			(int16_t)fabs(lat),
-			(int32_t)fabs(lat * 60) % 60,
-			(int32_t)fabs(lat * 60 * 100) % 100,
-			lat > 0 ? 'N' : 'S',
+		sprintf(msg, 
+			";CXXISAT00*"
+			"%.2hu%.2hu%.2huh"
+			"%.2d%.2ld.%.2ld%c"
+			"%c"
+			"%.3d%.2ld.%.2ld%c"
+			"%c"
+			"%.3ld/%.3ld"
+			"/A=%.6ld"
+			"/Ti=%+.2ld"
+			"/Te=%+.2ld"
+			"/V=%ld.%.2ld"
+			"/#%.4lu",
+			hours, minutes, seconds,
+			(int16_t)fabs(lat), (int32_t)fabs(lat * 60) % 60, (int32_t)fabs(lat * 60 * 100) % 100, lat > 0 ? 'N' : 'S',
 			'/',
-			(int16_t)fabs(lon),
-			(int32_t)fabs(lon * 60) % 60,
-			(int32_t)fabs(lon * 60 * 100) % 100,
-			lon > 0 ? 'E' : 'W',
+			(int16_t)fabs(lon), (int32_t)fabs(lon * 60) % 60, (int32_t)fabs(lon * 60 * 100) % 100, lon > 0 ? 'E' : 'W',
 			'O',
-			(int32_t)course,
-			(int32_t)METERS_PER_SECOND_TO_KNOTS(speed),
+			(int32_t)course, (int32_t)METERS_PER_SECOND_TO_KNOTS(speed),
 			(int32_t)METERS_TO_FEET(max(alt, 0.0f)),
 			(int32_t)thermTempsFiltered[0],
 			(int32_t)thermTempsFiltered[1],
@@ -381,6 +396,9 @@ void transmitAPRS(uint32_t now)
 	Serial.print('-');
 	Serial.print((int)dest.m_SSID);
 	Serial.print(msg);
+	Serial.print('(');
+	Serial.print(strlen(msg));
+	Serial.print(')');
 	Serial.println();
 #endif
 
