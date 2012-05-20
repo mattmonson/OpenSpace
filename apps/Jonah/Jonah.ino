@@ -73,10 +73,8 @@ void loop()
 	pressureFiltered = LowPassFilter((float)pressure.GetPressureInPa(), pressureFiltered, dt, 2.5f);
 
 	// time to transmit?
-	if (now - lastSend >= 500)
+	if (now - lastSend >= 1000)
 		transmit(now);
-	else
-		Serial.write((uint8_t)0);
 	
 	fps.loop();
 }
@@ -85,21 +83,21 @@ void transmit(uint32_t now)
 {
 	lastSend = now;
 
-	struct Packet
+	struct JonahPacket
 	{
 		uint32_t now;
-		uint16_t batteryVoltage; // in centi-Volts
-		int16_t thermTemp;       // in deci-C
-		int16_t bmpTemp;         // in deci-C
-		uint32_t bmpPressure;    // in Pa
+		uint32_t batteryVoltage : 14; // in milli-Volts
+		uint32_t bmpPressure    : 18; // in Pa
+		int32_t bmpTemp         : 12; // in deci-C
+		int32_t thermTemp       : 20; // in milli-C
 	};
 
-	Packet p;
+	JonahPacket p;
 	p.now = now;
-	p.batteryVoltage = floor(batteryVoltageSmooth * 100.0f + 0.5f);
-	p.thermTemp = floor(thermTempFiltered * 10.0f + 0.5f);
-	p.bmpTemp = pressure.GetTempInDeciC();
+	p.batteryVoltage = floor(batteryVoltageSmooth * 1000.0f + 0.5f);
 	p.bmpPressure = floor(pressureFiltered + 0.5f);
+	p.bmpTemp = pressure.GetTempInDeciC();
+	p.thermTemp = floor(thermTempFiltered * 1000.0f + 0.5f);
 
 	for (int i=0; i<10; ++i)
 		Serial.write((uint8_t)0);

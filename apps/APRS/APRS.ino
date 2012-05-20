@@ -35,6 +35,17 @@ float pressureFiltered;
 SoftwareSerial JonahSerial(11, 9);
 JonahRX jonahRX;
 
+struct JonahPacket
+{
+	uint32_t now;
+	uint32_t batteryVoltage : 14; // in milli-Volts
+	uint32_t bmpPressure    : 18; // in Pa
+	int32_t bmpTemp         : 12; // in deci-C
+	int32_t thermTemp       : 20; // in milli-C
+};
+
+JonahPacket lastJonahPacket;
+
 // data for tracking the ascent rate
 const uint32_t c_AscentRateInterval = 15000ul;
 uint32_t ascentRateTime = 0;
@@ -163,32 +174,26 @@ void loop()
 
 void onJonahReceive(const uint8_t* data, size_t size)
 {
-	struct Packet
-	{
-		uint32_t now;
-		uint16_t batteryVoltage; // in centi-Volts
-		int16_t thermTemp;       // in deci-C
-		int16_t bmpTemp;         // in deci-C
-		uint32_t bmpPressure;    // in Pa
-	};
-
-	if (size != sizeof(Packet))
+	if (size != sizeof(JonahPacket))
 	{
 		//Serial.print("Unexpected size for Jonah packet: ");
 		//Serial.println(size);
 		return;
 	}
 
-	const Packet* p = reinterpret_cast<const Packet*>(data);
-	Serial.print(p->now);
+	lastJonahPacket = *reinterpret_cast<const JonahPacket*>(data);
+	Serial << F("Jonah,");
+	Serial.print(millis());
 	Serial.print(',');
-	Serial.print(p->batteryVoltage);
+	Serial.print(lastJonahPacket.now);
 	Serial.print(',');
-	Serial.print(p->thermTemp);
+	Serial.print(lastJonahPacket.batteryVoltage * 0.001, 3);
 	Serial.print(',');
-	Serial.print(p->bmpTemp);
+	Serial.print(lastJonahPacket.bmpPressure);
 	Serial.print(',');
-	Serial.print(p->bmpPressure);
+	Serial.print(lastJonahPacket.bmpTemp * 0.1, 1);
+	Serial.print(',');
+	Serial.print(lastJonahPacket.thermTemp * 0.001, 3);
 	Serial.println();
 }
 
