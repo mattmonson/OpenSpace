@@ -72,9 +72,8 @@ void loop()
 	pressure.loopAsync();
 	pressureFiltered = LowPassFilter((float)pressure.GetPressureInPa(), pressureFiltered, dt, 2.5f);
 
-	// time to transmit?
-	if (now - lastSend >= 1000)
-		transmit(now);
+	// transmit
+	transmit(now);
 	
 	fps.loop();
 }
