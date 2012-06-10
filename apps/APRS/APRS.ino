@@ -32,6 +32,7 @@ TinyGPS gps;
 BMP085 pressure;
 float pressureFiltered;
 
+#define JonahBaud 4800
 SoftwareSerial JonahSerial(11, 9);
 JonahRX jonahRX;
 
@@ -82,7 +83,7 @@ void setup()
 	digitalWrite(13, HIGH);
 
 	Serial.begin(115200);
-	JonahSerial.begin(4800);
+	JonahSerial.begin(JonahBaud);
 
 	pinMode(I2CEnablePin, OUTPUT);
 	digitalWrite(I2CEnablePin, HIGH);
@@ -297,6 +298,9 @@ void transmitAPRS(uint32_t now)
 	lastTransmit = now;
 	++msgNum;
 
+	// turn off the SoftwareSerial because we don't want it's interruptions here
+	JonahSerial.end();
+
 	AX25Address dest = {"APRS", 0};
 	uint8_t pathCount = c_FullPathCount;
 
@@ -410,6 +414,14 @@ void transmitAPRS(uint32_t now)
 	packet.build(c_SrcAddress, dest, c_FullPath, pathCount, msg);
 	packet.transmit(&sinewave);
 
+	// wait for the packet to be done transmitting
+	while (packet.transmitting())
+	{
+	}
+
 	//Serial.println(GetFreeMemory());
+
+	// turn the SoftwareSerial back on now
+	JonahSerial.begin(JonahBaud);
 }
 
