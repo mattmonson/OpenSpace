@@ -333,7 +333,7 @@ void transmitAPRS(uint32_t now)
 			pathCount = 0;
 		}
 
-#if 0
+#if 1
 		char miceInfo[32];
 		packet.MicECompress(&dest, miceInfo, 
 			lat,
@@ -345,12 +345,31 @@ void transmitAPRS(uint32_t now)
 			'/'
 		);
 
-		sprintf(msg, "%sTi=%ld/Te=%ld/V=%ld.%.2ld/A'=%.2ld/#%lu", 
+		sprintf(msg,
+			"%s"
+			"Ti=%+ld"
+			"/Te=%+ld"
+			"/Tb=%+ld"
+			"/TE=%+ld"
+			"/TB=%+ld"
+			"/V=%ld.%.2ld"
+			"/Vb=%ld.%.2ld"
+			"/Pe=%.6ld"
+			"/Pb=%.6ld"
+			"/A'=%+.2ld"
+			"/#%lu", 
 			miceInfo,
 			(int32_t)thermTempsFiltered[0],
-			(int32_t)thermTempsFiltered[1],
+			(int32_t)(0.5f * (thermTempsFiltered[1] + thermTempsFiltered[2])),
+			(int32_t)(lastJonahPacket.thermTemp / 1000),
+			(int32_t)(pressure.GetTempInDeciC() / 10),
+			(int32_t)(lastJonahPacket.bmpTemp / 10),
 			(int32_t)fabs(batteryVoltageSmooth),
 			(int32_t)fabs(batteryVoltageSmooth * 100) % 100,
+			(int32_t)(lastJonahPacket.batteryVoltage / 1000),
+			(int32_t)(lastJonahPacket.batteryVoltage / 10) % 100,
+			(int32_t)pressureFiltered,
+			(int32_t)lastJonahPacket.bmpPressure,
 			(int32_t)(ascentRate * 10),
 			msgNum
 		);
