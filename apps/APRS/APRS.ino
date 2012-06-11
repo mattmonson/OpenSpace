@@ -5,6 +5,7 @@
 #include <BMP085.h>
 #include <Flash.h>
 #include "Jonah.h"
+#include <CRC.h>
 #include <AX25.h>
 #include <Sinewave.h>
 #include <TimerOne.h>

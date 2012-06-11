@@ -3,6 +3,7 @@
 #include <FPS.h>
 #include <BMP085.h>
 #include <Thermistor.h>
+#include <CRC.h>
 
 uint32_t lastFrameTime = 0;
 FPS fps(0);
@@ -101,18 +102,20 @@ void transmit(uint32_t now)
 	for (int i=0; i<10; ++i)
 		Serial.write((uint8_t)0);
 
-	uint8_t checksum = 0;
+	uint32_t crc = crc32_init();
 
 	Serial.write((uint8_t)sizeof(p));
-	checksum ^= (uint8_t)sizeof(p);
+	crc = crc32_update(crc, (uint8_t)sizeof(p));
 
 	for (size_t i=0; i<sizeof(p); ++i)
 	{
 		const uint8_t byte = reinterpret_cast<uint8_t*>(&p)[i];
 
 		Serial.write(byte);
-		checksum ^= byte;
+		crc = crc32_update(crc, byte);
 	}
 
-	Serial.write(checksum);
+	crc = crc32_finish(crc);
+
+	Serial.write((uint8_t*)&crc, sizeof(crc));
 }
