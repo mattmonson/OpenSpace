@@ -37,6 +37,11 @@ float pressureFiltered;
 SoftwareSerial JonahSerial(11, 9);
 JonahRX jonahRX;
 
+bool jonahListening = false;
+uint32_t lastJonahListenStart = 0;
+const uint32_t c_JonahListenPeriod = 3333ul; // how often we'll turn on the JonahSerial and look for a JonahPacket
+const uint32_t c_JonahListenTimeout = 500ul; // how long we'll listen before giving up
+
 struct JonahPacket
 {
 	uint32_t now;
@@ -73,6 +78,9 @@ const uint32_t TransmitPeriod = 60000ul;
 uint32_t lastTransmit = 0;
 
 
+void jonahUpdate(uint32_t now);
+void jonahListen(uint32_t now);
+void jonahIgnore();
 void onJonahReceive(const uint8_t* data, size_t size);
 void transmitLoggingHeadings();
 void transmitLogging(uint32_t now);
@@ -84,7 +92,6 @@ void setup()
 	digitalWrite(13, HIGH);
 
 	Serial.begin(115200);
-	JonahSerial.begin(JonahBaud);
 
 	pinMode(I2CEnablePin, OUTPUT);
 	digitalWrite(I2CEnablePin, HIGH);
@@ -115,7 +122,8 @@ void setup()
 	uint32_t now = millis();
 	lastFrameTime = now;
 	loggingLastSend = now;
-	lastTransmit = now - TransmitPeriod + 1000;
+	lastJonahListenStart = now - c_JonahListenPeriod;
+	lastTransmit = now - TransmitPeriod + 5000;
 
 	transmitLoggingHeadings();
 
@@ -144,9 +152,7 @@ void loop()
 	pressure.loopAsync();
 	pressureFiltered = LowPassFilter((float)pressure.GetPressureInPa(), pressureFiltered, dt, 2.5f);
 
-	while (JonahSerial.available())
-		if (jonahRX.onReceive(JonahSerial.read()))
-			onJonahReceive(jonahRX.getData(), jonahRX.getDataSize());
+	jonahUpdate(now);
 
 	// ascent rate
 	if (gps.get_position(NULL, NULL))
@@ -172,6 +178,44 @@ void loop()
 		transmitAPRS(now);
 	
 	fps.loop();
+}
+
+void jonahUpdate(uint32_t now)
+{
+	// handle jonah
+	if (jonahListening)
+	{
+		if (now - lastJonahListenStart >= c_JonahListenTimeout)
+		{
+			jonahIgnore();
+		}
+
+		while (jonahListening && JonahSerial.available())
+		{
+			if (jonahRX.onReceive(JonahSerial.read()))
+			{
+				onJonahReceive(jonahRX.getData(), jonahRX.getDataSize());
+				jonahIgnore();
+			}
+		}
+	}
+	else if (now - lastJonahListenStart >= c_JonahListenPeriod)
+	{
+		jonahListen(now);
+	}
+}
+
+void jonahListen(uint32_t now)
+{
+	lastJonahListenStart = now;
+	jonahListening = true;
+	JonahSerial.begin(JonahBaud);
+}
+
+void jonahIgnore()
+{
+	jonahListening = false;
+	JonahSerial.end();
 }
 
 void onJonahReceive(const uint8_t* data, size_t size)
@@ -299,8 +343,8 @@ void transmitAPRS(uint32_t now)
 	lastTransmit = now;
 	++msgNum;
 
-	// turn off the SoftwareSerial because we don't want it's interruptions here
-	JonahSerial.end();
+	// ignore Jonah because we don't want it's interruptions here
+	jonahIgnore();
 
 	AX25Address dest = {"APRS", 0};
 	uint8_t pathCount = c_FullPathCount;
@@ -440,8 +484,5 @@ void transmitAPRS(uint32_t now)
 	}
 
 	//Serial.println(GetFreeMemory());
-
-	// turn the SoftwareSerial back on now
-	JonahSerial.begin(JonahBaud);
 }
 
