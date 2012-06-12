@@ -228,6 +228,8 @@ void onJonahReceive(const uint8_t* data, size_t size)
 	}
 
 	lastJonahPacket = *reinterpret_cast<const JonahPacket*>(data);
+
+#if 0
 	Serial << F("Jonah,");
 	Serial.print(millis());
 	Serial.print(',');
@@ -241,6 +243,7 @@ void onJonahReceive(const uint8_t* data, size_t size)
 	Serial.print(',');
 	Serial.print(lastJonahPacket.thermTemp * 0.001, 3);
 	Serial.println();
+#endif
 }
 
 void transmitLoggingHeadings()
@@ -267,7 +270,13 @@ void transmitLoggingHeadings()
 
 	Serial << F("bmpTemp (deg C),");
 	Serial << F("bmpPressure (Pa),");
-	
+
+	Serial << F("jonah now (ms),");
+	Serial << F("jonah battery (V),");
+	Serial << F("balloon pressure (Pa),");
+	Serial << F("balloon bmpTemp (deg C),");
+	Serial << F("balloon thermistor (deg C),");
+
 	Serial.println();
 }
 
@@ -334,7 +343,18 @@ void transmitLogging(uint32_t now)
 	Serial.print(',');
 	Serial.print(pressureFiltered, 0);
 	Serial.print(',');
-	
+
+	Serial.print(lastJonahPacket.now);
+	Serial.print(',');
+	Serial.print(lastJonahPacket.batteryVoltage * 0.001, 3);
+	Serial.print(',');
+	Serial.print(lastJonahPacket.bmpPressure);
+	Serial.print(',');
+	Serial.print(lastJonahPacket.bmpTemp * 0.1, 1);
+	Serial.print(',');
+	Serial.print(lastJonahPacket.thermTemp * 0.001, 3);
+	Serial.print(',');
+
 	Serial.println();
 }
 
