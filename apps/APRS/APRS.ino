@@ -39,8 +39,8 @@ JonahRX jonahRX;
 
 bool jonahListening = false;
 uint32_t lastJonahListenStart = 0;
-const uint32_t c_JonahListenPeriod = 3333ul; // how often we'll turn on the JonahSerial and look for a JonahPacket
-const uint32_t c_JonahListenTimeout = 500ul; // how long we'll listen before giving up
+const uint32_t c_JonahListenPeriod = 3000ul; // how often we'll turn on the JonahSerial and look for a JonahPacket
+const uint32_t c_JonahListenTimeout = 250ul; // how long we'll listen before giving up
 
 struct JonahPacket
 {
@@ -52,6 +52,7 @@ struct JonahPacket
 };
 
 JonahPacket lastJonahPacket;
+uint32_t lastJonahPacketReceiveTime = 0;
 
 // data for tracking the ascent rate
 const uint32_t c_AscentRateInterval = 15000ul;
@@ -138,7 +139,10 @@ void loop()
 
 	fps.increment();
 
-	digitalWrite(13, (now / 250) % 2);
+	bool ledStatus =
+		(now % 1000) < 100 ||
+		(now - lastJonahPacketReceiveTime) < 500ul;
+	digitalWrite(13, ledStatus);
 	
 	batteryVoltage = analogRead(BatteryMonitorPin) / 1023.0f * 5.0f;
 	batteryVoltageSmooth = LowPassFilter(batteryVoltage, batteryVoltageSmooth, dt, 2.5f);
@@ -183,19 +187,19 @@ void loop()
 void jonahUpdate(uint32_t now)
 {
 	// handle jonah
-	if (jonahListening)
+	if (jonahListening && now - lastJonahListenStart >= c_JonahListenTimeout)
 	{
-		if (now - lastJonahListenStart >= c_JonahListenTimeout)
-		{
-			jonahIgnore();
-		}
-
-		while (jonahListening && JonahSerial.available())
+		jonahIgnore();
+	}
+	else if (jonahListening)
+	{
+		while (JonahSerial.available() && millis() - lastJonahListenStart < c_JonahListenTimeout)
 		{
 			if (jonahRX.onReceive(JonahSerial.read()))
 			{
 				onJonahReceive(jonahRX.getData(), jonahRX.getDataSize());
 				jonahIgnore();
+				break;
 			}
 		}
 	}
@@ -228,6 +232,7 @@ void onJonahReceive(const uint8_t* data, size_t size)
 	}
 
 	lastJonahPacket = *reinterpret_cast<const JonahPacket*>(data);
+	lastJonahPacketReceiveTime = millis();
 
 #if 0
 	Serial << F("Jonah,");
