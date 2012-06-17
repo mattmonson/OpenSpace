@@ -62,7 +62,7 @@ void loop()
 
 	fps.increment();
 
-	digitalWrite(13, (now / 250) % 2);
+	digitalWrite(13, (now % 1000) < 100);
 	
 	// update sensors
 	batteryVoltage = analogRead(c_BatteryMonitorPin) * c_BatteryVoltageScale;
