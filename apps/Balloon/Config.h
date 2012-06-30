@@ -6,7 +6,7 @@
 const uint32_t TargetFrameTime           = 0ul;
 const uint32_t LoggingInterval           = 100ul;
 const uint32_t LoggingStagger            = 0ul;
-const uint32_t TelemetryTransmitInterval = 500ul;
+const uint32_t TelemetryTransmitInterval = 1000ul;
 const uint32_t TelemetryTransmitStagger  = 250ul;
 
 #define LoggingBaud 115200
