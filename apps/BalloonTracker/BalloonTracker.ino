@@ -223,7 +223,9 @@ void handleTelemetry(uint32_t now, const TelemetryPacket& packet)
 	Serial.print(',');
 	Serial.print(TinyGPS::cardinal(packet.gpsCourse));
 	Serial.print(',');
-	Serial.print((int)packet.gpsSpeed);
+	Serial.print(packet.gpsSpeed);
+	Serial.print(',');
+	Serial.print(packet.bmpPressure);
 	Serial.print(',');
 	Serial.print((int)packet.tmpInternal);
 	Serial.print(',');
@@ -278,6 +280,7 @@ void transmitHeadings()
 	Serial.print("gpsCourse (deg),");
 	Serial.print("gpsCourse (cardinal),");
 	Serial.print("gpsSpeed (m/s),");
+	Serial.print("bmpPressure (Pa),");
 	Serial.print("tmpInt (C),");
 	Serial.print("tmpExt (C),");
 	Serial.print("battery (V),");
@@ -388,6 +391,8 @@ void transmitLCD(uint32_t now)
 		LCDSerial.print("Alt ");
 		LCDSerial.print(latestTelemetryPacket.gpsAlt);
 		LCDSerial.print('m');
+		LCDSerial.print(latestTelemetryPacket.bmpPressure);
+		LCDSerial.print('P');
 
 		LCDSerial.print(c_GoToLine2);
 		LCDSerial.print("Asc ");
@@ -408,7 +413,7 @@ void transmitLCD(uint32_t now)
 
 	case 2:
 		LCDSerial.print("Spd ");
-		LCDSerial.print((int)latestTelemetryPacket.gpsSpeed);
+		LCDSerial.print(latestTelemetryPacket.gpsSpeed);
 		LCDSerial.print("m/s ");
 		LCDSerial.print(TinyGPS::cardinal(latestTelemetryPacket.gpsCourse));
 

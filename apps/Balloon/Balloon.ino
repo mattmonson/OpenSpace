@@ -331,6 +331,8 @@ void transmitTelemetry(uint32_t now)
 		packet.gpsSpeed = 0;
 	}
 
+	packet.bmpPressure = pressure.GetPressureInPa();
+
 	//packet.tmpInternal = (int8_t)(tmps[ETMPs::Internal].GetTemp() + 0.5f);
 	//packet.tmpExternal = (int8_t)(tmps[ETMPs::External].GetTemp() + 0.5f);
 	packet.tmpInternal = (int8_t)(thermTempsFiltered[EThermistors::Internal] + 0.5f);
@@ -340,5 +342,4 @@ void transmitTelemetry(uint32_t now)
 	
 	xtend.SendTo(XTendDest, (uint8_t*)&packet, sizeof(packet));
 }
-
 
