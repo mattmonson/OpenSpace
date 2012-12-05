@@ -39,6 +39,8 @@ JonahRX jonahRX;
 
 bool jonahListening = false;
 uint32_t lastJonahListenStart = 0;
+uint32_t jonahReceiveCount = 0;
+uint32_t jonahListenCount = 0;
 const uint32_t c_JonahListenPeriod = 3000ul; // how often we'll turn on the JonahSerial and look for a JonahPacket
 const uint32_t c_JonahListenTimeout = 250ul; // how long we'll listen before giving up
 
@@ -211,6 +213,7 @@ void jonahUpdate(uint32_t now)
 
 void jonahListen(uint32_t now)
 {
+    ++jonahListenCount;
 	lastJonahListenStart = now;
 	jonahListening = true;
 	JonahSerial.begin(JonahBaud);
@@ -226,11 +229,10 @@ void onJonahReceive(const uint8_t* data, size_t size)
 {
 	if (size != sizeof(JonahPacket))
 	{
-		//Serial.print("Unexpected size for Jonah packet: ");
-		//Serial.println(size);
 		return;
 	}
 
+    ++jonahReceiveCount;
 	lastJonahPacket = *reinterpret_cast<const JonahPacket*>(data);
 	lastJonahPacketReceiveTime = millis();
 
@@ -276,6 +278,8 @@ void transmitLoggingHeadings()
 	Serial << F("bmpTemp (deg C),");
 	Serial << F("bmpPressure (Pa),");
 
+    Serial << F("jonah receive count,");
+    Serial << F("jonah listen count,");
 	Serial << F("jonah now (ms),");
 	Serial << F("jonah battery (V),");
 	Serial << F("balloon pressure (Pa),");
@@ -349,6 +353,10 @@ void transmitLogging(uint32_t now)
 	Serial.print(pressureFiltered, 0);
 	Serial.print(',');
 
+    Serial.print(jonahReceiveCount);
+	Serial.print(',');
+    Serial.print(jonahListenCount);
+	Serial.print(',');
 	Serial.print(lastJonahPacket.now);
 	Serial.print(',');
 	Serial.print(lastJonahPacket.batteryVoltage * 0.001, 3);
