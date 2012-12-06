@@ -14,7 +14,7 @@ void AX25Packet::MicECompress(AX25Address* dest, char* info, float lat, float lo
 {
 	//TODO: this doesn't support position ambiguity
 
-	sprintf(dest->m_CallSign, "%.2ld%.2ld%.2ld",
+	sprintf_P(dest->m_CallSign, PSTR("%.2ld%.2ld%.2ld"),
 		(int32_t)fabs(lat),
 		(int32_t)fabs(lat *  60) % 60,
 		(int32_t)fabs(lat * 60 * 100) % 100
@@ -47,7 +47,7 @@ void AX25Packet::MicECompress(AX25Address* dest, char* info, float lat, float lo
 	const uint32_t speedKnots = (uint32_t)METERS_PER_SECOND_TO_KNOTS(speedMetersPerSecond);
 
 	const bool gpsDataCurrent = 1;
-	sprintf(info, "%c%c%c%c%c%c%c%c%c%c%c%c}",
+	sprintf_P(info, PSTR("%c%c%c%c%c%c%c%c%c%c%c%c}"),
 		gpsDataCurrent ? '`' : '\'',
 		(char)(lonDeg >= 110 ? lonDeg - 110 + '&' : lonDeg >= 100 ? lonDeg - 100 + 'l' : lonDeg >= 10 ? lonDeg - 10 + '&' : lonDeg + 'v'),
 		(char)(lonMin >= 10 ? lonMin - 10 + '&' : lonMin + 'X'),

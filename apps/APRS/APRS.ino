@@ -412,7 +412,7 @@ void transmitAPRS(uint32_t now)
         }
 
 #if 1
-        char miceInfo[32];
+        char miceInfo[16];
         packet.MicECompress(&dest, miceInfo, 
             lat,
             lon,
@@ -423,7 +423,7 @@ void transmitAPRS(uint32_t now)
             '/'
         );
 
-        sprintf(msg,
+        sprintf_P(msg, PSTR(
             "%s"
             "Ti=%+ld"
             "/Te=%+ld"
@@ -435,7 +435,7 @@ void transmitAPRS(uint32_t now)
             "/Pe=%.6ld"
             "/Pb=%.6ld"
             "/A'=%+.2ld"
-            "/#%lu", 
+            "/#%lu"),
             miceInfo,
             (int32_t)thermTempsFiltered[0],
             (int32_t)(0.5f * (thermTempsFiltered[1] + thermTempsFiltered[2])),
@@ -452,7 +452,7 @@ void transmitAPRS(uint32_t now)
             msgNum
         );
 #else
-        sprintf(msg, 
+        sprintf_P(msg, PSTR(
             ";CXXISAT00*"
             "%.2hu%.2hu%.2huh"
             "%.2d%.2ld.%.2ld%c"
@@ -464,7 +464,7 @@ void transmitAPRS(uint32_t now)
             "/Ti=%+.2ld"
             "/Te=%+.2ld"
             "/V=%ld.%.2ld"
-            "/#%.4lu",
+            "/#%.4lu"),
             hours, minutes, seconds,
             (int16_t)fabs(lat), (int32_t)fabs(lat * 60) % 60, (int32_t)fabs(lat * 60 * 100) % 100, lat > 0 ? 'N' : 'S',
             '/',
@@ -502,9 +502,14 @@ void transmitAPRS(uint32_t now)
     Serial.print('-');
     Serial.print((int)dest.m_SSID);
     Serial.print(msg);
-    Serial.print('(');
+    Serial.print(',');
+
     Serial.print(strlen(msg));
-    Serial.print(')');
+    Serial.print(',');
+
+    Serial.print(GetFreeMemory());
+    Serial.print(',');
+
     Serial.println();
 #endif
 
@@ -515,7 +520,5 @@ void transmitAPRS(uint32_t now)
     while (packet.transmitting())
     {
     }
-
-    //Serial.println(GetFreeMemory());
 }
 
