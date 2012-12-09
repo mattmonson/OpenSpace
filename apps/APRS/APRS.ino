@@ -100,7 +100,7 @@ void setup()
     digitalWrite(I2CEnablePin, HIGH);
     Wire.begin();
 
-    delay(1000);
+    delay(2000);
 
     pinMode(BatteryMonitorPin, INPUT);
     batteryVoltage = analogRead(BatteryMonitorPin) / 1023.0f * 5.0f;
