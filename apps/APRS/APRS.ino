@@ -79,9 +79,12 @@ const float c_GroundAltitude = 0.0f;
 const float c_FullPathAltitudeCutoff = 1500.0f;
 const float c_FastTxAltitudeCutoff = 3000.0f;
 const float c_FastTxAscentRateCutoff = -1.5f;
+const float c_VeryFastTxAltitudeCutoff = 250.0f;
+const float c_VeryFastTxAscentRateCutoff = -2.5f;
 
 const uint32_t TransmitInterval = 60000ul;
 const uint32_t TransmitIntervalFast = 30000ul;
+const uint32_t TransmitIntervalVeryFast = 15000ul;
 uint32_t lastTransmit = 0;
 
 
@@ -190,7 +193,10 @@ void loop()
         (now - lastTransmit >= TransmitInterval ||
          now - lastTransmit >= TransmitIntervalFast && 
             gps.f_altitude() <= c_GroundAltitude + c_FastTxAltitudeCutoff &&
-            ascentRate <= c_FastTxAscentRateCutoff))
+            ascentRate <= c_FastTxAscentRateCutoff ||
+         now - lastTransmit >= TransmitIntervalVeryFast && 
+            gps.f_altitude() <= c_GroundAltitude + c_VeryFastTxAltitudeCutoff &&
+            ascentRate <= c_VeryFastTxAscentRateCutoff))
     {
         transmitAPRS(now);
     }
