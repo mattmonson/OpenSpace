@@ -57,7 +57,7 @@ JonahPacket lastJonahPacket;
 uint32_t lastJonahPacketReceiveTime = 0;
 
 // data for tracking the ascent rate
-const uint32_t c_AscentRateInterval = 15000ul;
+const uint32_t c_AscentRateInterval = 30000ul;
 uint32_t ascentRateTime = 0;
 float ascentRateAlt = 0.0f;
 float ascentRate = 0.0f;
@@ -75,9 +75,13 @@ const AX25Address c_FullPath[] = {
 };
 const uint8_t c_FullPathCount = sizeof(c_FullPath) / sizeof(c_FullPath[0]);
 
-const float c_HighAltitudeCutoff = 1500.0f;
+const float c_GroundAltitude = 0.0f;
+const float c_FullPathAltitudeCutoff = 1500.0f;
+const float c_FastTxAltitudeCutoff = 3000.0f;
+const float c_FastTxAscentRateCutoff = -1.5f;
 
-const uint32_t TransmitPeriod = 60000ul;
+const uint32_t TransmitInterval = 60000ul;
+const uint32_t TransmitIntervalFast = 30000ul;
 uint32_t lastTransmit = 0;
 
 
@@ -126,7 +130,7 @@ void setup()
     lastFrameTime = now;
     loggingLastSend = now;
     lastJonahListenStart = now - c_JonahListenPeriod;
-    lastTransmit = now - TransmitPeriod + 5000;
+    lastTransmit = now - TransmitInterval + 5000;
 
     transmitLoggingHeadings();
 
@@ -179,9 +183,17 @@ void loop()
 
     // time to transmit?
     if (now - loggingLastSend >= LoggingInterval)
+    {
         transmitLogging(now);
-    if (now - lastTransmit >= TransmitPeriod && gps.get_position(NULL, NULL) && gps.get_datetime(NULL, NULL))
+    }
+    if (gps.get_position(NULL, NULL) && gps.get_datetime(NULL, NULL) &&
+        (now - lastTransmit >= TransmitInterval ||
+         now - lastTransmit >= TransmitIntervalFast && 
+            gps.f_altitude() <= c_GroundAltitude + c_FastTxAltitudeCutoff &&
+            ascentRate <= c_FastTxAscentRateCutoff))
+    {
         transmitAPRS(now);
+    }
     
     fps.loop();
 }
@@ -406,7 +418,7 @@ void transmitAPRS(uint32_t now)
             course = speed = alt = 0;
         }
 
-        if (alt >= c_HighAltitudeCutoff)
+        if (alt >= c_GroundAltitude + c_FullPathAltitudeCutoff)
         {
             pathCount = 0;
         }
